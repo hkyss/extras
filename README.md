@@ -192,3 +192,25 @@ php artisan extras:info package-name --format=yaml
 - `--dependencies, -d` - показать зависимости
 - `--releases, -r` - показать историю релизов
 - `--format, -f` - формат вывода (table, json, yaml)
+
+### Управление кэшем
+
+```bash
+# Очистить кэш
+php artisan extras:cache --clear
+
+# Показать статус кэша
+php artisan extras:cache --status
+
+# Обновить кэш
+php artisan extras:cache --refresh
+
+# Статистика кэша
+php artisan extras:cache --stats
+```
+
+Опции:
+- `--clear, -c` - очистить весь кэш
+- `--status, -s` - показать статус кэша
+- `--refresh, -r` - обновить кэш (очистить и перестроить)
+- `--stats` - показать статистику кэша

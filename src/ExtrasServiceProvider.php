@@ -11,6 +11,7 @@ use EvolutionCMS\Extras\Console\Commands\ExtrasBatchInstallCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasBatchUpdateCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasBatchRemoveCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasInfoCommand;
+use EvolutionCMS\Extras\Console\Commands\ExtrasCacheCommand;
 use EvolutionCMS\Extras\Services\ExtrasService;
 use EvolutionCMS\Extras\Services\CacheService;
 use EvolutionCMS\Extras\Managers\RepositoryManager;
@@ -31,7 +32,7 @@ class ExtrasServiceProvider extends ServiceProvider
             $manager = new RepositoryManager();
             $cacheService = $app->make(CacheService::class);
             
-            $manager->addRepository(new ApiRepository());
+            $manager->addRepository(new ApiRepository(null, $cacheService));
             
             $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras', $cacheService));
             
@@ -74,6 +75,7 @@ class ExtrasServiceProvider extends ServiceProvider
             ExtrasBatchUpdateCommand::class,
             ExtrasBatchRemoveCommand::class,
             ExtrasInfoCommand::class,
+            ExtrasCacheCommand::class,
         ]);
 
         $this->publishes([
