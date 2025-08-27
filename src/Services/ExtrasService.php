@@ -5,18 +5,19 @@ namespace EvolutionCMS\Extras\Services;
 use EvolutionCMS\Extras\Models\Extras;
 use EvolutionCMS\Extras\Interfaces\ExtrasRepositoryInterface;
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
+use EvolutionCMS\Extras\Services\RepositoryManager;
 use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
 use EvolutionCMS\Extras\Exceptions\InstallationException;
 
 class ExtrasService
 {
-    private ExtrasRepositoryInterface $repository;
+    private RepositoryManager $repositoryManager;
     private PackageManagerInterface $packageManager;
     private string $cachePath;
 
-    public function __construct(ExtrasRepositoryInterface $repository, PackageManagerInterface $packageManager = null)
+    public function __construct(RepositoryManager $repositoryManager, PackageManagerInterface $packageManager = null)
     {
-        $this->repository = $repository;
+        $this->repositoryManager = $repositoryManager;
         $this->packageManager = $packageManager ?? new \EvolutionCMS\Extras\Managers\ComposerPackageManager();
         $this->cachePath = config('extras.cache.path', EVO_CORE_PATH . 'cache/extras/');
         $this->ensureCacheDirectory();
@@ -27,7 +28,7 @@ class ExtrasService
      */
     public function getAvailableExtras(): array
     {
-        return $this->repository->getAll();
+        return $this->repositoryManager->getAllExtras();
     }
 
     /**
@@ -36,7 +37,7 @@ class ExtrasService
      */
     public function getExtra(string $packageName): ?Extras
     {
-        return $this->repository->find($packageName);
+        return $this->repositoryManager->findExtra($packageName);
     }
 
     /**

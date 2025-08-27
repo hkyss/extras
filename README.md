@@ -1,6 +1,6 @@
 # EvolutionCMS Extras
 
-Консольный менеджер дополнений для EvolutionCMS. Позволяет устанавливать, удалять и обновлять дополнения через командную строку.
+Консольный менеджер дополнений для EvolutionCMS. Позволяет устанавливать, удалять и обновлять дополнения через командную строку. Поддерживает загрузку дополнений с различных источников, включая GitHub репозитории.
 
 ## Установка
 
@@ -26,6 +26,34 @@ composer install
 
 ```bash
 php artisan vendor:publish --tag=extras-config
+```
+
+### Добавление дополнительных репозиториев
+
+По умолчанию включен репозиторий [EvolutionCMS Extras](https://github.com/evolution-cms-extras) с популярными дополнениями:
+- TinyMCE5 - редактор для EvolutionCMS 3
+- DocLister - компонент для вывода документов  
+- FormLister - обработчик форм
+- multifields - кастомные TV поля
+- evocms-resourceHistory - история ресурсов
+
+Для добавления дополнительных GitHub репозиториев отредактируйте `config/extras.php`:
+
+```php
+'repositories' => [
+    // Обязательный репозиторий EvolutionCMS Extras (уже включен)
+    [
+        'type' => 'github',
+        'organization' => 'evolution-cms-extras',
+        'name' => 'EvolutionCMS Extras'
+    ],
+    // Дополнительные репозитории
+    [
+        'type' => 'github',
+        'organization' => 'your-org',
+        'name' => 'Your Repository'
+    ],
+],
 ```
 
 ## Использование

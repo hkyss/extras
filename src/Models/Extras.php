@@ -21,6 +21,7 @@ class Extras
     public array $extra;
     public string $createdAt;
     public string $updatedAt;
+    public string $repository = '';
 
     public function __construct(array $data)
     {
