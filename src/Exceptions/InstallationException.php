@@ -2,7 +2,7 @@
 
 namespace EvolutionCMS\Extras\Exceptions;
 
-class InstallationException extends ExtrasStoreException
+class InstallationException extends ExtrasException
 {
     public function __construct(string $packageName, string $reason = '')
     {

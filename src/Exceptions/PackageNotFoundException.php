@@ -2,7 +2,7 @@
 
 namespace EvolutionCMS\Extras\Exceptions;
 
-class PackageNotFoundException extends ExtrasStoreException
+class PackageNotFoundException extends ExtrasException
 {
     public function __construct(string $packageName)
     {
