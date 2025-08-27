@@ -37,17 +37,15 @@ class ExtrasServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/extras.php', 'extras');
 
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                ExtrasListCommand::class,
-                ExtrasInstallCommand::class,
-                ExtrasRemoveCommand::class,
-                ExtrasUpdateCommand::class,
-            ]);
+        $this->commands([
+            ExtrasListCommand::class,
+            ExtrasInstallCommand::class,
+            ExtrasRemoveCommand::class,
+            ExtrasUpdateCommand::class,
+        ]);
 
-            $this->publishes([
-                __DIR__ . '/../config/extras.php' => config_path('extras.php'),
-            ], 'extras-config');
-        }
+        $this->publishes([
+            __DIR__ . '/../config/extras.php' => config_path('extras.php'),
+        ], 'extras-config');
     }
 }
