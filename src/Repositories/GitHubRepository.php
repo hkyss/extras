@@ -71,12 +71,20 @@ class GitHubRepository implements RepositoryInterface
      */
     public function find(string $packageName): ?Extras
     {
+        $cacheKey = "github_repo_{$this->organization}_{$packageName}";
+        
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
         try {
             $response = $this->httpClient->get($this->apiUrl . '/repos/' . $this->organization . '/' . $packageName);
             $repo = json_decode($response->getBody()->getContents(), true);
 
             if ($this->isValidExtra($repo)) {
-                return $this->createExtraFromRepo($repo);
+                $extra = $this->createExtraFromRepo($repo);
+                $this->cache->set($cacheKey, $extra, 3600);
+                return $extra;
             }
 
             return null;
@@ -91,6 +99,12 @@ class GitHubRepository implements RepositoryInterface
      */
     public function search(string $search): array
     {
+        $cacheKey = "github_search_{$this->organization}_" . md5($search);
+        
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
         try {
             $response = $this->httpClient->get($this->apiUrl . '/search/repositories', [
                 'query' => [
@@ -109,6 +123,7 @@ class GitHubRepository implements RepositoryInterface
                 }
             }
 
+            $this->cache->set($cacheKey, $extras, 3600);
             return $extras;
         } catch (GuzzleException $e) {
             return [];

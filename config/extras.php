@@ -9,7 +9,7 @@ return [
     | Настройки API для получения данных о дополнениях
     |
     */
-    'api_url' => env('EXTRAS_API_URL', 'https://extras.evolutioncms.com/api'),
+    'api_url' => env('EXTRAS_API_URL', ''),
     
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +47,6 @@ return [
     |
     */
     'repositories' => [
-        // Обязательный репозиторий EvolutionCMS Extras
         [
             'type' => 'github',
             'organization' => 'evolution-cms-extras',
