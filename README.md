@@ -103,3 +103,64 @@ php artisan extras:update
 - `--version=1.0.0` - указать версию для обновления
 - `--force` - принудительное обновление
 - `--check-only` - только проверить доступные обновления
+
+### Массовые операции
+
+#### Массовая установка
+```bash
+# Установить несколько дополнений
+php artisan extras:batch:install package1 package2 package3
+
+# Установить из файла (по одному на строку)
+php artisan extras:batch:install --file=packages.txt
+
+# Предварительный просмотр без установки
+php artisan extras:batch:install package1 package2 --dry-run
+```
+
+Опции:
+- `--file=filename` - файл со списком пакетов
+- `--force` - пропустить подтверждения
+- `--continue-on-error` - продолжить при ошибках
+- `--dry-run` - предварительный просмотр
+- `--parallel=N` - количество параллельных установок
+
+#### Массовое обновление
+```bash
+# Обновить конкретные дополнения
+php artisan extras:batch:update package1 package2
+
+# Обновить все установленные дополнения
+php artisan extras:batch:update
+
+# Проверить доступные обновления
+php artisan extras:batch:update --check-only
+```
+
+Опции:
+- `--file=filename` - файл со списком пакетов
+- `--force` - пропустить подтверждения
+- `--continue-on-error` - продолжить при ошибках
+- `--dry-run` - предварительный просмотр
+- `--check-only` - только проверить обновления
+- `--parallel=N` - количество параллельных обновлений
+
+#### Массовое удаление
+```bash
+# Удалить несколько дополнений
+php artisan extras:batch:remove package1 package2
+
+# Удалить все установленные дополнения
+php artisan extras:batch:remove --all
+
+# Удалить из файла
+php artisan extras:batch:remove --file=packages.txt
+```
+
+Опции:
+- `--file=filename` - файл со списком пакетов
+- `--force` - пропустить подтверждения
+- `--continue-on-error` - продолжить при ошибках
+- `--dry-run` - предварительный просмотр
+- `--all` - удалить все установленные дополнения
+- `--keep-deps` - сохранить зависимости

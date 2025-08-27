@@ -7,6 +7,9 @@ use EvolutionCMS\Extras\Console\Commands\ExtrasListCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
+use EvolutionCMS\Extras\Console\Commands\ExtrasBatchInstallCommand;
+use EvolutionCMS\Extras\Console\Commands\ExtrasBatchUpdateCommand;
+use EvolutionCMS\Extras\Console\Commands\ExtrasBatchRemoveCommand;
 use EvolutionCMS\Extras\Services\ExtrasService;
 use EvolutionCMS\Extras\Services\CacheService;
 use EvolutionCMS\Extras\Managers\RepositoryManager;
@@ -66,6 +69,9 @@ class ExtrasServiceProvider extends ServiceProvider
             ExtrasInstallCommand::class,
             ExtrasRemoveCommand::class,
             ExtrasUpdateCommand::class,
+            ExtrasBatchInstallCommand::class,
+            ExtrasBatchUpdateCommand::class,
+            ExtrasBatchRemoveCommand::class,
         ]);
 
         $this->publishes([
