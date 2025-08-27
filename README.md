@@ -164,3 +164,31 @@ php artisan extras:batch:remove --file=packages.txt
 - `--dry-run` - предварительный просмотр
 - `--all` - удалить все установленные дополнения
 - `--keep-deps` - сохранить зависимости
+
+### Информация о дополнении
+
+```bash
+# Основная информация
+php artisan extras:info package-name
+
+# Подробная информация
+php artisan extras:info package-name --verbose
+
+# С зависимостями
+php artisan extras:info package-name --dependencies
+
+# История релизов
+php artisan extras:info package-name --releases
+
+# В формате JSON
+php artisan extras:info package-name --format=json
+
+# В формате YAML
+php artisan extras:info package-name --format=yaml
+```
+
+Опции:
+- `--verbose, -v` - показать подробную информацию
+- `--dependencies, -d` - показать зависимости
+- `--releases, -r` - показать историю релизов
+- `--format, -f` - формат вывода (table, json, yaml)

@@ -22,6 +22,9 @@ class Extras
     public string $createdAt;
     public string $updatedAt;
     public string $repository = '';
+    public array $requireDev;
+    public array $releases;
+    public string $source;
 
     public function __construct(array $data)
     {
@@ -42,6 +45,9 @@ class Extras
         $this->extra = $data['extra'] ?? [];
         $this->createdAt = $data['created_at'] ?? '';
         $this->updatedAt = $data['updated_at'] ?? '';
+        $this->requireDev = $data['require-dev'] ?? [];
+        $this->releases = $data['releases'] ?? [];
+        $this->source = $data['source'] ?? '';
     }
 
     /**
