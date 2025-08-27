@@ -4,10 +4,10 @@ namespace EvolutionCMS\Extras\Repositories;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use EvolutionCMS\Extras\Interfaces\ExtrasRepositoryInterface;
+use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
 use EvolutionCMS\Extras\Models\Extras;
 
-class ApiRepository implements ExtrasRepositoryInterface
+class ApiRepository implements RepositoryInterface
 {
     private Client $httpClient;
     private string $apiUrl;
@@ -89,5 +89,21 @@ class ApiRepository implements ExtrasRepositoryInterface
         } catch (GuzzleException $e) {
             return [];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'API Repository';
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->apiUrl;
     }
 }

@@ -11,7 +11,7 @@ class ComposerPackageManager implements PackageManagerInterface
 
     public function __construct(string $projectPath = null)
     {
-        $this->projectPath = $projectPath ?? config('extras.composer.project_path', EVO_CORE_PATH . '../');
+        $this->projectPath = $projectPath ?? config('extras.composer.project_path', defined('EVO_CORE_PATH') ? EVO_CORE_PATH . '../' : '../');
     }
 
     /**

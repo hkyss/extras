@@ -3,7 +3,7 @@
 namespace EvolutionCMS\Extras\Services;
 
 use EvolutionCMS\Extras\Models\Extras;
-use EvolutionCMS\Extras\Interfaces\ExtrasRepositoryInterface;
+
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
 use EvolutionCMS\Extras\Services\RepositoryManager;
 use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
@@ -19,7 +19,7 @@ class ExtrasService
     {
         $this->repositoryManager = $repositoryManager;
         $this->packageManager = $packageManager ?? new \EvolutionCMS\Extras\Managers\ComposerPackageManager();
-        $this->cachePath = config('extras.cache.path', EVO_CORE_PATH . 'cache/extras/');
+        $this->cachePath = config('extras.cache.path', defined('EVO_CORE_PATH') ? EVO_CORE_PATH . 'cache/extras/' : 'cache/extras/');
         $this->ensureCacheDirectory();
     }
 

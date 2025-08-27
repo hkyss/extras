@@ -22,7 +22,7 @@ return [
     'cache' => [
         'enabled' => env('EXTRAS_CACHE_ENABLED', true),
         'ttl' => env('EXTRAS_CACHE_TTL', 3600),
-        'path' => env('EXTRAS_CACHE_PATH', EVO_CORE_PATH . 'cache/extras/'),
+        'path' => env('EXTRAS_CACHE_PATH', defined('EVO_CORE_PATH') ? EVO_CORE_PATH . 'cache/extras/' : 'cache/extras/'),
     ],
     
     /*
@@ -35,7 +35,7 @@ return [
     */
     'composer' => [
         'timeout' => env('EXTRAS_COMPOSER_TIMEOUT', 300),
-        'project_path' => env('EXTRAS_PROJECT_PATH', EVO_CORE_PATH . '../'),
+        'project_path' => env('EXTRAS_PROJECT_PATH', defined('EVO_CORE_PATH') ? EVO_CORE_PATH . '../' : '../'),
     ],
     
     /*

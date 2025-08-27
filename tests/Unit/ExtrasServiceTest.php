@@ -4,7 +4,7 @@ namespace EvolutionCMS\Extras\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Interfaces\ExtrasRepositoryInterface;
+use EvolutionCMS\Extras\Services\RepositoryManager;
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
 use EvolutionCMS\Extras\Models\Extras;
 use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
@@ -12,14 +12,14 @@ use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
 class ExtrasServiceTest extends TestCase
 {
     private ExtrasService $service;
-    private ExtrasRepositoryInterface $repository;
+    private RepositoryManager $repositoryManager;
     private PackageManagerInterface $packageManager;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(ExtrasRepositoryInterface::class);
+        $this->repositoryManager = $this->createMock(RepositoryManager::class);
         $this->packageManager = $this->createMock(PackageManagerInterface::class);
-        $this->service = new ExtrasService($this->repository, $this->packageManager);
+        $this->service = new ExtrasService($this->repositoryManager, $this->packageManager);
     }
 
     public function testGetAvailableExtras(): void
@@ -29,8 +29,8 @@ class ExtrasServiceTest extends TestCase
             new Extras(['name' => 'test/package2', 'description' => 'Test package 2']),
         ];
 
-        $this->repository->expects($this->once())
-            ->method('getAll')
+        $this->repositoryManager->expects($this->once())
+            ->method('getAllExtras')
             ->willReturn($extras);
 
         $result = $this->service->getAvailableExtras();
@@ -44,8 +44,8 @@ class ExtrasServiceTest extends TestCase
     {
         $extra = new Extras(['name' => 'test/package', 'description' => 'Test package']);
 
-        $this->repository->expects($this->once())
-            ->method('find')
+        $this->repositoryManager->expects($this->once())
+            ->method('findExtra')
             ->with('test/package')
             ->willReturn($extra);
 
@@ -58,8 +58,8 @@ class ExtrasServiceTest extends TestCase
     {
         $extra = new Extras(['name' => 'test/package', 'description' => 'Test package']);
 
-        $this->repository->expects($this->once())
-            ->method('find')
+        $this->repositoryManager->expects($this->once())
+            ->method('findExtra')
             ->with('test/package')
             ->willReturn($extra);
 
@@ -75,8 +75,8 @@ class ExtrasServiceTest extends TestCase
 
     public function testInstallExtraNotFound(): void
     {
-        $this->repository->expects($this->once())
-            ->method('find')
+        $this->repositoryManager->expects($this->once())
+            ->method('findExtra')
             ->with('test/package')
             ->willReturn(null);
 
