@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
 use EvolutionCMS\Extras\Models\Extras;
+use EvolutionCMS\Extras\Services\CacheService;
 
 class GitHubRepository implements RepositoryInterface
 {
@@ -13,13 +14,15 @@ class GitHubRepository implements RepositoryInterface
     private string $apiUrl;
     private string $organization;
     private string $name;
+    private CacheService $cache;
 
-    public function __construct(string $organization, string $name = 'GitHub')
+    public function __construct(string $organization, string $name = 'GitHub', CacheService $cache = null)
     {
         $this->organization = $organization;
         $this->name = $name;
         $this->apiUrl = 'https://api.github.com';
-
+        $this->cache = $cache ?? new CacheService(app('cache'));
+        
         $this->httpClient = new Client([
             'timeout' => 30,
             'headers' => [
@@ -29,26 +32,33 @@ class GitHubRepository implements RepositoryInterface
         ]);
     }
 
-    /**
+        /**
      * @return Extras[]
      */
     public function getAll(): array
     {
+        $cacheKey = "github_repos_{$this->organization}";
+        
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
         try {
             $response = $this->httpClient->get($this->apiUrl . '/orgs/' . $this->organization . '/repos');
             $repos = json_decode($response->getBody()->getContents(), true);
-
+            
             if (!is_array($repos)) {
                 throw new \RuntimeException('Invalid response from GitHub API');
             }
-
+            
             $extras = [];
             foreach ($repos as $repo) {
                 if ($this->isValidExtra($repo)) {
                     $extras[] = $this->createExtraFromRepo($repo);
                 }
             }
-
+            
+            $this->cache->set($cacheKey, $extras, 3600);
             return $extras;
         } catch (GuzzleException $e) {
             return [];

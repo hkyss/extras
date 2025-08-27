@@ -8,6 +8,7 @@ use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
 use EvolutionCMS\Extras\Services\ExtrasService;
+use EvolutionCMS\Extras\Services\CacheService;
 use EvolutionCMS\Extras\Managers\RepositoryManager;
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
 use EvolutionCMS\Extras\Repositories\ApiRepository;
@@ -18,19 +19,25 @@ class ExtrasServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(CacheService::class, function ($app) {
+            return new CacheService($app->make('cache'));
+        });
+
         $this->app->singleton(RepositoryManager::class, function ($app) {
             $manager = new RepositoryManager();
+            $cacheService = $app->make(CacheService::class);
             
             $manager->addRepository(new ApiRepository());
             
-            $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras'));
+            $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras', $cacheService));
             
             $repositories = config('extras.repositories', []);
             foreach ($repositories as $repo) {
                 if (isset($repo['type']) && $repo['type'] === 'github') {
                     $manager->addRepository(new GitHubRepository(
                         $repo['organization'],
-                        $repo['name'] ?? 'GitHub'
+                        $repo['name'] ?? 'GitHub',
+                        $cacheService
                     ));
                 }
             }
