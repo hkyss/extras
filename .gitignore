@@ -1,0 +1,14 @@
+/vendor/
+/node_modules/
+.env
+.env.local
+.env.*.local
+.idea/
+.vscode/
+*.log
+*.cache
+.DS_Store
+Thumbs.db
+composer.lock
+package-lock.json
+yarn.lock
