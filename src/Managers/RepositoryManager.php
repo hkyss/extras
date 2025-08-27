@@ -1,6 +1,6 @@
 <?php
 
-namespace EvolutionCMS\Extras\Services;
+namespace EvolutionCMS\Extras\Managers;
 
 use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
 use EvolutionCMS\Extras\Models\Extras;
@@ -41,7 +41,6 @@ class RepositoryManager
                     $allExtras[] = $extra;
                 }
             } catch (\Exception $e) {
-                // Log error but continue with other repositories
                 continue;
             }
         }

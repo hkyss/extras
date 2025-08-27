@@ -5,7 +5,7 @@ namespace EvolutionCMS\Extras\Services;
 use EvolutionCMS\Extras\Models\Extras;
 
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
-use EvolutionCMS\Extras\Services\RepositoryManager;
+use EvolutionCMS\Extras\Managers\RepositoryManager;
 use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
 use EvolutionCMS\Extras\Exceptions\InstallationException;
 
