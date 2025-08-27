@@ -69,7 +69,7 @@ class ExtrasListCommand extends Command
     private function outputTable(OutputInterface $output, array $extras): void
     {
         $table = new Table($output);
-        $table->setHeaders(['Name', 'Version', 'Description', 'Author', 'Status']);
+        $table->setHeaders(['Name', 'Version', 'Description', 'Author', 'Repository', 'Status']);
 
         foreach ($extras as $extra) {
             $status = $extra->isInstalled() ? '<info>Installed</info>' : '<comment>Available</comment>';
@@ -79,6 +79,7 @@ class ExtrasListCommand extends Command
                 $extra->version,
                 $extra->getShortDescription(),
                 $extra->author,
+                $extra->repository ?: 'Unknown',
                 $status
             ]);
         }
