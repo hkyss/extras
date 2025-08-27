@@ -19,7 +19,7 @@ class GitHubRepository implements RepositoryInterface
         $this->organization = $organization;
         $this->name = $name;
         $this->apiUrl = 'https://api.github.com';
-        
+
         $this->httpClient = new Client([
             'timeout' => 30,
             'headers' => [
@@ -37,17 +37,21 @@ class GitHubRepository implements RepositoryInterface
         try {
             $response = $this->httpClient->get($this->apiUrl . '/orgs/' . $this->organization . '/repos');
             $repos = json_decode($response->getBody()->getContents(), true);
-            
+
+            if (!is_array($repos)) {
+                throw new \RuntimeException('Invalid response from GitHub API');
+            }
+
             $extras = [];
             foreach ($repos as $repo) {
                 if ($this->isValidExtra($repo)) {
                     $extras[] = $this->createExtraFromRepo($repo);
                 }
             }
-            
+
             return $extras;
         } catch (GuzzleException $e) {
-            throw new \RuntimeException('Failed to fetch GitHub repos: ' . $e->getMessage());
+            return [];
         }
     }
 
@@ -60,11 +64,11 @@ class GitHubRepository implements RepositoryInterface
         try {
             $response = $this->httpClient->get($this->apiUrl . '/repos/' . $this->organization . '/' . $packageName);
             $repo = json_decode($response->getBody()->getContents(), true);
-            
+
             if ($this->isValidExtra($repo)) {
                 return $this->createExtraFromRepo($repo);
             }
-            
+
             return null;
         } catch (GuzzleException $e) {
             return null;
@@ -85,16 +89,16 @@ class GitHubRepository implements RepositoryInterface
                     'order' => 'desc'
                 ]
             ]);
-            
+
             $data = json_decode($response->getBody()->getContents(), true);
             $extras = [];
-            
+
             foreach ($data['items'] ?? [] as $repo) {
                 if ($this->isValidExtra($repo)) {
                     $extras[] = $this->createExtraFromRepo($repo);
                 }
             }
-            
+
             return $extras;
         } catch (GuzzleException $e) {
             return [];
@@ -123,10 +127,7 @@ class GitHubRepository implements RepositoryInterface
      */
     private function isValidExtra(array $repo): bool
     {
-        return !$repo['fork'] && 
-               !$repo['archived'] && 
-               $repo['language'] === 'PHP' &&
-               $this->hasComposerJson($repo);
+        return !$repo['archived'];
     }
 
     /**
@@ -150,7 +151,7 @@ class GitHubRepository implements RepositoryInterface
     private function createExtraFromRepo(array $repo): Extras
     {
         $composerData = $this->getComposerData($repo['full_name']);
-        
+
         return new Extras([
             'name' => $composerData['name'] ?? $repo['full_name'],
             'description' => $repo['description'] ?? '',
@@ -190,7 +191,7 @@ class GitHubRepository implements RepositoryInterface
                 return json_decode(base64_decode($content['content']), true) ?: [];
             }
         } catch (GuzzleException $e) {
-            // Ignore errors
+            // 
         }
         
         return [];

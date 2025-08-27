@@ -4,7 +4,7 @@ namespace EvolutionCMS\Extras\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Services\RepositoryManager;
+use EvolutionCMS\Extras\Managers\RepositoryManager;
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
 use EvolutionCMS\Extras\Models\Extras;
 use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;

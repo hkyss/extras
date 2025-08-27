@@ -8,7 +8,7 @@ use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
 use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
 use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Services\RepositoryManager;
+use EvolutionCMS\Extras\Managers\RepositoryManager;
 use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
 use EvolutionCMS\Extras\Repositories\ApiRepository;
 use EvolutionCMS\Extras\Repositories\GitHubRepository;
@@ -21,10 +21,10 @@ class ExtrasServiceProvider extends ServiceProvider
         $this->app->singleton(RepositoryManager::class, function ($app) {
             $manager = new RepositoryManager();
             
-            // Добавляем основной API репозиторий
             $manager->addRepository(new ApiRepository());
             
-            // Добавляем репозитории из конфигурации
+            $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras'));
+            
             $repositories = config('extras.repositories', []);
             foreach ($repositories as $repo) {
                 if (isset($repo['type']) && $repo['type'] === 'github') {
