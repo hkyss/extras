@@ -82,7 +82,7 @@ class ComposerPackageManager implements PackageManagerInterface
 
     private function getComposerJsonPath(): string
     {
-        return $this->projectPath . 'composer.json';
+        return $this->projectPath . 'core/composer.json';
     }
 
     /**
