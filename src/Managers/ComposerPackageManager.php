@@ -119,7 +119,7 @@ class ComposerPackageManager implements PackageManagerInterface
 
     private function runComposerInstall(): bool
     {
-        $process = new Process(['composer', 'install'], $this->projectPath);
+        $process = new Process(['composer', 'install'], "{$this->projectPath}core");
         $process->setTimeout(config('extras.composer.timeout', 300));
         
         return $process->run() === 0;
@@ -127,7 +127,7 @@ class ComposerPackageManager implements PackageManagerInterface
 
     private function runComposerUpdate(): bool
     {
-        $process = new Process(['composer', 'update'], $this->projectPath);
+        $process = new Process(['composer', 'update'], "{$this->projectPath}core");
         $process->setTimeout(config('extras.composer.timeout', 300));
         
         return $process->run() === 0;
