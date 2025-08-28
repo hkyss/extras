@@ -77,6 +77,19 @@ class GitHubRepository implements RepositoryInterface
             return $this->cache->get($cacheKey);
         }
 
+        // Попробуем найти в кэше getAll() сначала
+        $allCacheKey = "github_repos_{$this->organization}";
+        if ($this->cache->has($allCacheKey)) {
+            $allExtras = $this->cache->get($allCacheKey);
+            foreach ($allExtras as $extra) {
+                if ($extra->name === $packageName) {
+                    // Кэшируем найденный пакет отдельно
+                    $this->cache->set($cacheKey, $extra, 3600);
+                    return $extra;
+                }
+            }
+        }
+
         try {
             $response = $this->httpClient->get($this->apiUrl . '/repos/' . $this->organization . '/' . $packageName);
             $repo = json_decode($response->getBody()->getContents(), true);

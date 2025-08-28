@@ -88,6 +88,14 @@ class ExtrasService
         return $this->packageManager->getInstalled();
     }
 
+    /**
+     * @return RepositoryManager
+     */
+    public function getRepositoryManager(): RepositoryManager
+    {
+        return $this->repositoryManager;
+    }
+
     private function ensureCacheDirectory(): void
     {
         if (!is_dir($this->cachePath)) {
