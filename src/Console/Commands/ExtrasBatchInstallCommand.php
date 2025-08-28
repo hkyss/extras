@@ -29,10 +29,10 @@ class ExtrasBatchInstallCommand extends Command
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to install')
-            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
+            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('continue-on-error', 'c', InputOption::VALUE_NONE, 'Continue installation even if some packages fail')
-            ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Show what would be installed without actually installing')
+            ->addOption('continue-on-error', null, InputOption::VALUE_NONE, 'Continue installation even if some packages fail')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be installed without actually installing')
             ->addOption('parallel', 'p', InputOption::VALUE_OPTIONAL, 'Number of parallel installations (default: 1)', '1');
     }
 

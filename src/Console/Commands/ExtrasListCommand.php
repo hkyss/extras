@@ -30,7 +30,7 @@ class ExtrasListCommand extends Command
         $this
             ->addOption('installed', 'i', InputOption::VALUE_NONE, 'Show only installed extras')
             ->addOption('search', 's', InputOption::VALUE_REQUIRED, 'Search extras by name or description')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
+            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
             ->addOption('interactive', null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
     }
 
