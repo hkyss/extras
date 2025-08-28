@@ -27,14 +27,14 @@ class ExtrasRemoveCommand extends Command
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to remove')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force removal without confirmation')
-            ->addOption('keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages');
+            ->addOption('remove-force', null, InputOption::VALUE_NONE, 'Force removal without confirmation')
+            ->addOption('remove-keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
-        $force = $input->getOption('force');
+        $force = $input->getOption('remove-force');
 
         try {
             $extra = $this->extrasService->getExtra($packageName);

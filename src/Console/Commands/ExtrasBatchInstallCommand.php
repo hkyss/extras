@@ -29,11 +29,11 @@ class ExtrasBatchInstallCommand extends Command
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to install')
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('continue-on-error', null, InputOption::VALUE_NONE, 'Continue installation even if some packages fail')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be installed without actually installing')
-            ->addOption('parallel', 'p', InputOption::VALUE_OPTIONAL, 'Number of parallel installations (default: 1)', '1');
+            ->addOption('install-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
+            ->addOption('batch-install-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
+            ->addOption('batch-install-continue-on-error', null, InputOption::VALUE_NONE, 'Continue installation even if some packages fail')
+            ->addOption('batch-install-dry-run', null, InputOption::VALUE_NONE, 'Show what would be installed without actually installing')
+            ->addOption('batch-install-parallel', null, InputOption::VALUE_OPTIONAL, 'Number of parallel installations (default: 1)', '1');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -47,10 +47,10 @@ class ExtrasBatchInstallCommand extends Command
             return Command::FAILURE;
         }
 
-        $dryRun = $input->getOption('dry-run');
-        $force = $input->getOption('force');
-        $continueOnError = $input->getOption('continue-on-error');
-        $parallel = (int) $input->getOption('parallel');
+        $dryRun = $input->getOption('batch-install-dry-run');
+        $force = $input->getOption('batch-install-force');
+        $continueOnError = $input->getOption('batch-install-continue-on-error');
+        $parallel = (int) $input->getOption('batch-install-parallel');
 
         if ($dryRun) {
             $this->performDryRun($output, $packages);
@@ -74,7 +74,7 @@ class ExtrasBatchInstallCommand extends Command
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('file');
+        $file = $input->getOption('install-file');
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

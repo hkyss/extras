@@ -28,18 +28,18 @@ class ExtrasBatchRemoveCommand extends Command
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to remove')
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('continue-on-error', null, InputOption::VALUE_NONE, 'Continue removal even if some packages fail')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be removed without actually removing')
-            ->addOption('keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies when removing packages')
+            ->addOption('remove-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
+            ->addOption('batch-remove-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
+            ->addOption('batch-remove-continue-on-error', null, InputOption::VALUE_NONE, 'Continue removal even if some packages fail')
+            ->addOption('batch-remove-dry-run', null, InputOption::VALUE_NONE, 'Show what would be removed without actually removing')
+            ->addOption('batch-keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies when removing packages')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all installed extras');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $dryRun = $input->getOption('dry-run');
+        $dryRun = $input->getOption('batch-remove-dry-run');
 
         if (empty($packages)) {
             $output->writeln('<error>No packages specified for removal.</error>');
@@ -53,9 +53,9 @@ class ExtrasBatchRemoveCommand extends Command
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('force');
-        $continueOnError = $input->getOption('continue-on-error');
-        $keepDeps = $input->getOption('keep-deps');
+        $force = $input->getOption('batch-remove-force');
+        $continueOnError = $input->getOption('batch-remove-continue-on-error');
+        $keepDeps = $input->getOption('batch-keep-deps');
 
         if (!$force) {
             if (!$this->confirmRemoval($input, $output, $packages)) {
@@ -74,7 +74,7 @@ class ExtrasBatchRemoveCommand extends Command
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('file');
+        $file = $input->getOption('remove-file');
         $all = $input->getOption('all');
 
         if ($file && file_exists($file)) {
