@@ -48,7 +48,7 @@ class ExtrasInstallCommand extends Command
             }
 
             if ($extra->isInstalled() && !$force) {
-                $output->writeln("<comment>Package '{$packageName}' is already installed. Use --force to reinstall.</comment>");
+                $output->writeln("<comment>Package '{$packageName}' is already installed. Use --install-force to reinstall.</comment>");
                 return Command::SUCCESS;
             }
 
