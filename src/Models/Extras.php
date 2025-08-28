@@ -47,7 +47,7 @@ class Extras
         $this->updatedAt = $data['updated_at'] ?? '';
         $this->requireDev = $data['require-dev'] ?? [];
         $this->releases = $data['releases'] ?? [];
-        $this->source = $data['source'] ?? '';
+        $this->source = $data['source']['url'] ?? '';
     }
 
     /**
