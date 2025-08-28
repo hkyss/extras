@@ -27,16 +27,16 @@ class ExtrasInstallCommand extends Command
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to install')
-            ->addOption('version', null, InputOption::VALUE_REQUIRED, 'Version to install', 'latest')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force installation even if already installed')
+            ->addOption('install-version', null, InputOption::VALUE_REQUIRED, 'Version to install', 'latest')
+            ->addOption('install-force', null, InputOption::VALUE_NONE, 'Force installation even if already installed')
             ->addOption('no-deps', null, InputOption::VALUE_NONE, 'Skip dependency installation');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
-        $version = $input->getOption('version');
-        $force = $input->getOption('force');
+        $version = $input->getOption('install-version');
+        $force = $input->getOption('install-force');
 
         try {
             $output->writeln("<info>Installing {$packageName}...</info>");

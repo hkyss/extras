@@ -29,8 +29,8 @@ class ExtrasListCommand extends Command
     {
         $this
             ->addOption('installed', 'i', InputOption::VALUE_NONE, 'Show only installed extras')
-            ->addOption('search', 's', InputOption::VALUE_REQUIRED, 'Search extras by name or description')
-            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
+            ->addOption('search', null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
+            ->addOption('list-format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
             ->addOption('interactive', null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
     }
 
@@ -38,7 +38,7 @@ class ExtrasListCommand extends Command
     {
         $installedOnly = $input->getOption('installed');
         $search = $input->getOption('search');
-        $format = $input->getOption('format');
+        $format = $input->getOption('list-format');
         $interactive = $input->getOption('interactive');
 
         try {

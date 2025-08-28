@@ -28,19 +28,19 @@ class ExtrasBatchUpdateCommand extends Command
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to update (leave empty for all installed)')
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('continue-on-error', null, InputOption::VALUE_NONE, 'Continue update even if some packages fail')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating')
-            ->addOption('check-only', null, InputOption::VALUE_NONE, 'Only check for available updates')
-            ->addOption('parallel', 'p', InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1)', '1');
+            ->addOption('update-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
+            ->addOption('batch-update-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
+            ->addOption('batch-update-continue-on-error', null, InputOption::VALUE_NONE, 'Continue update even if some packages fail')
+            ->addOption('batch-update-dry-run', null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating')
+            ->addOption('batch-check-only', null, InputOption::VALUE_NONE, 'Only check for available updates')
+            ->addOption('batch-update-parallel', null, InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1)', '1');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $checkOnly = $input->getOption('check-only');
-        $dryRun = $input->getOption('dry-run');
+        $checkOnly = $input->getOption('batch-check-only');
+        $dryRun = $input->getOption('batch-update-dry-run');
 
         if ($checkOnly) {
             return $this->checkForUpdates($output, $packages);
@@ -50,9 +50,9 @@ class ExtrasBatchUpdateCommand extends Command
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('force');
-        $continueOnError = $input->getOption('continue-on-error');
-        $parallel = (int) $input->getOption('parallel');
+        $force = $input->getOption('batch-update-force');
+        $continueOnError = $input->getOption('batch-update-continue-on-error');
+        $parallel = (int) $input->getOption('batch-update-parallel');
 
         if (!$force) {
             if (!$this->confirmUpdate($input, $output, $packages)) {
@@ -71,7 +71,7 @@ class ExtrasBatchUpdateCommand extends Command
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('file');
+        $file = $input->getOption('update-file');
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
