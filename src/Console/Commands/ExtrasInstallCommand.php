@@ -27,7 +27,7 @@ class ExtrasInstallCommand extends Command
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to install')
-            ->addOption('version', 'v', InputOption::VALUE_REQUIRED, 'Version to install', 'latest')
+            ->addOption('version', null, InputOption::VALUE_REQUIRED, 'Version to install', 'latest')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force installation even if already installed')
             ->addOption('no-deps', null, InputOption::VALUE_NONE, 'Skip dependency installation');
     }

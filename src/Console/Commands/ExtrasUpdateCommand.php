@@ -27,9 +27,9 @@ class ExtrasUpdateCommand extends Command
     {
         $this
             ->addArgument('package', InputArgument::OPTIONAL, 'Package name to update (if not specified, updates all)')
-            ->addOption('version', 'v', InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
+            ->addOption('version', null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force update even if already at latest version')
-            ->addOption('check-only', 'c', InputOption::VALUE_NONE, 'Only check for updates without installing');
+            ->addOption('check-only', null, InputOption::VALUE_NONE, 'Only check for updates without installing');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

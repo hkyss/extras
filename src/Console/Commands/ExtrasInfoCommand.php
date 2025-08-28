@@ -28,9 +28,9 @@ class ExtrasInfoCommand extends Command
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to get info for')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
+            ->addOption('format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
             ->addOption('verbose', 'v', InputOption::VALUE_NONE, 'Show verbose information')
-            ->addOption('dependencies', 'd', InputOption::VALUE_NONE, 'Show dependency information')
+            ->addOption('dependencies', null, InputOption::VALUE_NONE, 'Show dependency information')
             ->addOption('releases', 'r', InputOption::VALUE_NONE, 'Show release history');
     }
 
