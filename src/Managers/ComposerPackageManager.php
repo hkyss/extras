@@ -28,7 +28,7 @@ class ComposerPackageManager implements PackageManagerInterface
         
         $this->writeComposerJson($composerJson, $composerData);
         
-        return $this->runComposerInstall();
+        return $this->runComposerUpdate();
     }
 
     /**
@@ -43,7 +43,7 @@ class ComposerPackageManager implements PackageManagerInterface
         if (isset($composerData['require'][$packageName])) {
             unset($composerData['require'][$packageName]);
             $this->writeComposerJson($composerJson, $composerData);
-            return $this->runComposerInstall();
+            return $this->runComposerUpdate();
         }
         
         return false;
@@ -56,7 +56,16 @@ class ComposerPackageManager implements PackageManagerInterface
      */
     public function update(string $packageName, string $version = 'latest'): bool
     {
-        return $this->install($packageName, $version);
+        $composerJson = $this->getComposerJsonPath();
+        $composerData = $this->readComposerJson($composerJson);
+        
+        if (isset($composerData['require'][$packageName])) {
+            $composerData['require'][$packageName] = $version === 'latest' ? '*' : $version;
+            $this->writeComposerJson($composerJson, $composerData);
+            return $this->runComposerUpdate();
+        }
+        
+        return false;
     }
 
     /**
@@ -111,6 +120,14 @@ class ComposerPackageManager implements PackageManagerInterface
     private function runComposerInstall(): bool
     {
         $process = new Process(['composer', 'install'], $this->projectPath);
+        $process->setTimeout(config('extras.composer.timeout', 300));
+        
+        return $process->run() === 0;
+    }
+
+    private function runComposerUpdate(): bool
+    {
+        $process = new Process(['composer', 'update'], $this->projectPath);
         $process->setTimeout(config('extras.composer.timeout', 300));
         
         return $process->run() === 0;

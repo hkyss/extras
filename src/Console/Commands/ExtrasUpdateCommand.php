@@ -93,7 +93,7 @@ class ExtrasUpdateCommand extends Command
 
         if ($success) {
             $progressBar->advance();
-            $progressBar->setMessage('Running composer install...');
+            $progressBar->setMessage('Running composer update...');
             $progressBar->advance();
             $progressBar->setMessage('Update completed!');
             $progressBar->finish();
