@@ -7,26 +7,17 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasBatchInstallCommand extends BaseBatchCommand
 {
     protected static $defaultName = 'extras:batch:install';
     protected static $defaultDescription = 'Install multiple extras in batch mode';
 
-    use LegacyOptionsTrait;
-
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to install')
-            ->configureBatchOptions()
-
-            ->addOption(CommandOptions::INSTALL_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
-            ->addOption(CommandOptions::BATCH_INSTALL_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
-            ->addOption(CommandOptions::BATCH_INSTALL_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue installation even if some packages fail (legacy)')
-            ->addOption(CommandOptions::BATCH_INSTALL_DRY_RUN->value, null, InputOption::VALUE_NONE, 'Show what would be installed without actually installing (legacy)')
-            ->addOption(CommandOptions::BATCH_INSTALL_PARALLEL->value, null, InputOption::VALUE_OPTIONAL, 'Number of parallel installations (default: 1) (legacy)', '1');
+            ->configureBatchOptions();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -40,17 +31,10 @@ class ExtrasBatchInstallCommand extends BaseBatchCommand
             return Command::FAILURE;
         }
 
-        $this->showLegacyOptionWarnings($input);
-        
-        if (!$this->validateNoConflictingOptions($input)) {
-            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
-            return Command::FAILURE;
-        }
-
-        $dryRun = $this->hasOptionWithLegacySupport($input, CommandOptions::DRY_RUN);
-        $force = $this->hasOptionWithLegacySupport($input, CommandOptions::FORCE);
-        $continueOnError = $this->hasOptionWithLegacySupport($input, CommandOptions::CONTINUE_ON_ERROR);
-        $parallel = (int) $this->getOptionWithLegacySupport($input, CommandOptions::PARALLEL, '1');
+                $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $continueOnError = $input->getOption(CommandOptions::CONTINUE_ON_ERROR->value);
+        $parallel = (int) ($input->getOption(CommandOptions::PARALLEL->value) ?: '1');
 
         if ($dryRun) {
             $this->performDryRun($output, $packages, 'install');

@@ -9,34 +9,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasBatchUpdateCommand extends BaseBatchCommand
 {
     protected static $defaultName = 'extras:batch:update';
     protected static $defaultDescription = 'Update multiple extras in batch mode';
 
-    use LegacyOptionsTrait;
-
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to update (leave empty for all installed)')
-            ->configureBatchOptions()
-
-            ->addOption(CommandOptions::UPDATE_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
-            ->addOption(CommandOptions::BATCH_UPDATE_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
-            ->addOption(CommandOptions::BATCH_UPDATE_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue update even if some packages fail (legacy)')
-            ->addOption(CommandOptions::BATCH_UPDATE_DRY_RUN->value, null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating (legacy)')
-            ->addOption(CommandOptions::BATCH_CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for available updates (legacy)')
-            ->addOption(CommandOptions::BATCH_UPDATE_PARALLEL->value, null, InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1) (legacy)', '1');
+            ->configureBatchOptions();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $checkOnly = $input->getOption('batch-check-only');
-        $dryRun = $input->getOption('batch-update-dry-run');
+        $checkOnly = $input->getOption(CommandOptions::CHECK_ONLY->value);
+        $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
 
         if ($checkOnly) {
             return $this->checkForUpdates($output, $packages);
@@ -46,9 +36,9 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('batch-update-force');
-        $continueOnError = $input->getOption('batch-update-continue-on-error');
-        $parallel = (int) $input->getOption('batch-update-parallel');
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $continueOnError = $input->getOption(CommandOptions::CONTINUE_ON_ERROR->value);
+        $parallel = (int) ($input->getOption(CommandOptions::PARALLEL->value) ?: '1');
 
         if (!$force) {
             if (!$this->confirmUpdate($input, $output, $packages)) {
@@ -67,7 +57,7 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('update-file');
+        $file = $input->getOption(CommandOptions::FILE->value);
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

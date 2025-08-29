@@ -9,33 +9,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasBatchRemoveCommand extends BaseBatchCommand
 {
     protected static $defaultName = 'extras:batch:remove';
     protected static $defaultDescription = 'Remove multiple extras in batch mode';
 
-    use LegacyOptionsTrait;
-
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to remove')
             ->configureBatchOptions()
-            ->addOption(CommandOptions::ALL->value, 'a', InputOption::VALUE_NONE, 'Remove all installed extras')
-
-            ->addOption(CommandOptions::REMOVE_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
-            ->addOption(CommandOptions::BATCH_REMOVE_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
-            ->addOption(CommandOptions::BATCH_REMOVE_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue removal even if some packages fail (legacy)')
-            ->addOption(CommandOptions::BATCH_REMOVE_DRY_RUN->value, null, InputOption::VALUE_NONE, 'Show what would be removed without actually removing (legacy)')
-            ->addOption(CommandOptions::BATCH_KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies when removing packages (legacy)');
+            ->addOption(CommandOptions::ALL->value, 'a', InputOption::VALUE_NONE, 'Remove all installed extras');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $dryRun = $input->getOption('batch-remove-dry-run');
+        $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
 
         if (empty($packages)) {
             $output->writeln('<error>No packages specified for removal.</error>');
@@ -49,9 +40,9 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('batch-remove-force');
-        $continueOnError = $input->getOption('batch-remove-continue-on-error');
-        $keepDeps = $input->getOption('batch-keep-deps');
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $continueOnError = $input->getOption(CommandOptions::CONTINUE_ON_ERROR->value);
+        $keepDeps = $input->getOption(CommandOptions::KEEP_DEPS->value);
 
         if (!$force) {
             if (!$this->confirmRemoval($input, $output, $packages)) {
@@ -70,8 +61,8 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('remove-file');
-        $all = $input->getOption('all');
+        $file = $input->getOption(CommandOptions::FILE->value);
+        $all = $input->getOption(CommandOptions::ALL->value);
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

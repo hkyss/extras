@@ -10,14 +10,11 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Models\Extras;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasListCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:list';
     protected static $defaultDescription = 'List available EvolutionCMS extras';
-
-    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
@@ -25,24 +22,15 @@ class ExtrasListCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::INSTALLED->value, 'i', InputOption::VALUE_NONE, 'Show only installed extras')
             ->addOption(CommandOptions::SEARCH->value, null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
             ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
-            ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode')
-
-            ->addOption(CommandOptions::LIST_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json) (legacy)', 'table');
+            ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->showLegacyOptionWarnings($input);
-        
-        if (!$this->validateNoConflictingOptions($input)) {
-            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
-            return Command::FAILURE;
-        }
-        
-        $installedOnly = $this->hasOptionWithLegacySupport($input, CommandOptions::INSTALLED);
-        $search = $this->getOptionWithLegacySupport($input, CommandOptions::SEARCH);
-        $format = $this->getOptionWithLegacySupport($input, CommandOptions::FORMAT, 'table');
-        $interactive = $this->hasOptionWithLegacySupport($input, CommandOptions::INTERACTIVE);
+        $installedOnly = $input->getOption(CommandOptions::INSTALLED->value);
+        $search = $input->getOption(CommandOptions::SEARCH->value);
+        $format = $input->getOption(CommandOptions::FORMAT->value) ?: 'table';
+        $interactive = $input->getOption(CommandOptions::INTERACTIVE->value);
 
         try {
             if ($installedOnly) {

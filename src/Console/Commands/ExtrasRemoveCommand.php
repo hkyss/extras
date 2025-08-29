@@ -8,39 +8,26 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasRemoveCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:remove';
     protected static $defaultDescription = 'Remove EvolutionCMS extra';
 
-    use LegacyOptionsTrait;
-
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to remove')
             ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation')
-            ->addOption(CommandOptions::KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages')
-
-            ->addOption(CommandOptions::REMOVE_FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation (legacy)')
-            ->addOption(CommandOptions::REMOVE_KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages (legacy)');
+            ->addOption(CommandOptions::KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
         
-        $this->showLegacyOptionWarnings($input);
-        
-        if (!$this->validateNoConflictingOptions($input)) {
-            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
-            return Command::FAILURE;
-        }
-        
-        $force = $this->hasOptionWithLegacySupport($input, CommandOptions::FORCE);
-        $keepDeps = $this->hasOptionWithLegacySupport($input, CommandOptions::KEEP_DEPS);
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $keepDeps = $input->getOption(CommandOptions::KEEP_DEPS->value);
 
         try {
             if (!$this->validatePackageName($packageName)) {

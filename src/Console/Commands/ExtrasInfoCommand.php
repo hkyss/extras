@@ -9,14 +9,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use hkyss\Extras\Models\Extras;
 use hkyss\Extras\Enums\CommandOptions;
-use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasInfoCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:info';
     protected static $defaultDescription = 'Show detailed information about an extra';
-
-    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
@@ -25,26 +22,17 @@ class ExtrasInfoCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
             ->addOption(CommandOptions::VERBOSE->value, 'v', InputOption::VALUE_NONE, 'Show verbose information')
             ->addOption(CommandOptions::DEPENDENCIES->value, null, InputOption::VALUE_NONE, 'Show dependency information')
-            ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history')
-
-            ->addOption(CommandOptions::INFO_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml) (legacy)', 'table');
+            ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $package = $input->getArgument('package');
         
-        $this->showLegacyOptionWarnings($input);
-        
-        if (!$this->validateNoConflictingOptions($input)) {
-            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
-            return Command::FAILURE;
-        }
-        
-        $format = $this->getOptionWithLegacySupport($input, CommandOptions::FORMAT, 'table');
-        $verbose = $this->hasOptionWithLegacySupport($input, CommandOptions::VERBOSE);
-        $showDependencies = $this->hasOptionWithLegacySupport($input, CommandOptions::DEPENDENCIES);
-        $showReleases = $this->hasOptionWithLegacySupport($input, CommandOptions::RELEASES);
+        $format = $input->getOption(CommandOptions::FORMAT->value) ?: 'table';
+        $verbose = $input->getOption(CommandOptions::VERBOSE->value);
+        $showDependencies = $input->getOption(CommandOptions::DEPENDENCIES->value);
+        $showReleases = $input->getOption(CommandOptions::RELEASES->value);
 
         try {
             if (!$this->validatePackageName($package)) {
