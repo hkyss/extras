@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasUpdateCommand extends BaseExtrasCommand
+class UpdateCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:update';
     protected static $defaultDescription = 'Update EvolutionCMS extra';
@@ -72,13 +72,13 @@ class ExtrasUpdateCommand extends BaseExtrasCommand
             return Command::SUCCESS;
         }
 
-                    $output->writeln("\n<info>Updating package</info>");
+        $output->writeln("\n<info>Updating package</info>");
 
         $progressBar = new ProgressBar($output, 3);
         $progressBar->start();
 
         $progressBar->advance();
-                    $progressBar->setMessage('Updating composer.json');
+        $progressBar->setMessage('Updating composer.json');
 
         $success = $this->extrasService->updateExtra($packageName, $version);
 
@@ -89,7 +89,7 @@ class ExtrasUpdateCommand extends BaseExtrasCommand
             $progressBar->setMessage('Update completed');
             $progressBar->finish();
 
-                            $output->writeln("\n<info>Package '{$packageName}' updated successfully</info>");
+            $output->writeln("\n<info>Package '{$packageName}' updated successfully</info>");
             return Command::SUCCESS;
         } else {
             $progressBar->finish();

@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasInstallCommand extends BaseExtrasCommand
+class InstallCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:install';
     protected static $defaultDescription = 'Install EvolutionCMS extra';
@@ -64,7 +64,7 @@ class ExtrasInstallCommand extends BaseExtrasCommand
                 }
             }
 
-                            $output->writeln("\n<info>Installing package</info>");
+            $output->writeln("\n<info>Installing package</info>");
 
             $this->logOperation('install_started', [
                 'package' => $packageName,

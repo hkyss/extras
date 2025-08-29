@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasBatchRemoveCommand extends BaseBatchCommand
+class BatchRemoveCommand extends AbstractBatchCommand
 {
     protected static $defaultName = 'extras:batch:remove';
     protected static $defaultDescription = 'Remove multiple extras in batch mode';

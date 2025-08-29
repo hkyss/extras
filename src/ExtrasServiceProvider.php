@@ -3,15 +3,15 @@
 namespace hkyss\Extras;
 
 use Illuminate\Support\ServiceProvider;
-use hkyss\Extras\Console\Commands\ExtrasListCommand;
-use hkyss\Extras\Console\Commands\ExtrasInstallCommand;
-use hkyss\Extras\Console\Commands\ExtrasRemoveCommand;
-use hkyss\Extras\Console\Commands\ExtrasUpdateCommand;
-use hkyss\Extras\Console\Commands\ExtrasBatchInstallCommand;
-use hkyss\Extras\Console\Commands\ExtrasBatchUpdateCommand;
-use hkyss\Extras\Console\Commands\ExtrasBatchRemoveCommand;
-use hkyss\Extras\Console\Commands\ExtrasInfoCommand;
-use hkyss\Extras\Console\Commands\ExtrasCacheCommand;
+use hkyss\Extras\Console\Commands\ListCommand;
+use hkyss\Extras\Console\Commands\InstallCommand;
+use hkyss\Extras\Console\Commands\RemoveCommand;
+use hkyss\Extras\Console\Commands\UpdateCommand;
+use hkyss\Extras\Console\Commands\BatchInstallCommand;
+use hkyss\Extras\Console\Commands\BatchUpdateCommand;
+use hkyss\Extras\Console\Commands\BatchRemoveCommand;
+use hkyss\Extras\Console\Commands\InfoCommand;
+use hkyss\Extras\Console\Commands\CacheCommand;
 use hkyss\Extras\Services\ExtrasService;
 use hkyss\Extras\Services\CacheService;
 use hkyss\Extras\Managers\RepositoryManager;
@@ -72,15 +72,15 @@ class ExtrasServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/extras.php', 'extras');
 
         $this->commands([
-            ExtrasListCommand::class,
-            ExtrasInstallCommand::class,
-            ExtrasRemoveCommand::class,
-            ExtrasUpdateCommand::class,
-            ExtrasBatchInstallCommand::class,
-            ExtrasBatchUpdateCommand::class,
-            ExtrasBatchRemoveCommand::class,
-            ExtrasInfoCommand::class,
-            ExtrasCacheCommand::class,
+            ListCommand::class,
+            InstallCommand::class,
+            RemoveCommand::class,
+            UpdateCommand::class,
+            BatchInstallCommand::class,
+            BatchUpdateCommand::class,
+            BatchRemoveCommand::class,
+            InfoCommand::class,
+            CacheCommand::class,
         ]);
 
         $this->publishes([

@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasBatchInstallCommand extends BaseBatchCommand
+class BatchInstallCommand extends AbstractBatchCommand
 {
     protected static $defaultName = 'extras:batch:install';
     protected static $defaultDescription = 'Install multiple extras in batch mode';

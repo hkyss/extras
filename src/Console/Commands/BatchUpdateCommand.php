@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasBatchUpdateCommand extends BaseBatchCommand
+class BatchUpdateCommand extends AbstractBatchCommand
 {
     protected static $defaultName = 'extras:batch:update';
     protected static $defaultDescription = 'Update multiple extras in batch mode';

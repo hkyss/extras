@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\Table;
 use hkyss\Extras\Models\Extras;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasInfoCommand extends BaseExtrasCommand
+class InfoCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:info';
     protected static $defaultDescription = 'Show detailed information about an extra';

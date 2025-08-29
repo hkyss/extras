@@ -11,7 +11,7 @@ use hkyss\Extras\Models\Extras;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-abstract class BaseExtrasCommand extends Command
+abstract class AbstractExtrasCommand extends Command
 {
     protected ExtrasService $extrasService;
     protected LoggerInterface $logger;

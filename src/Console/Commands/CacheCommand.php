@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use hkyss\Extras\Services\CacheService;
 
-class ExtrasCacheCommand extends BaseExtrasCommand
+class CacheCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:cache';
     protected static $defaultDescription = 'Manage extras cache';

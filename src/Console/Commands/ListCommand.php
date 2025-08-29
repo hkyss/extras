@@ -11,7 +11,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Models\Extras;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasListCommand extends BaseExtrasCommand
+class ListCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:list';
     protected static $defaultDescription = 'List available EvolutionCMS extras';

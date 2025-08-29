@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasRemoveCommand extends BaseExtrasCommand
+class RemoveCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:remove';
     protected static $defaultDescription = 'Remove EvolutionCMS extra';
