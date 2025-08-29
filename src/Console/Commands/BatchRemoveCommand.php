@@ -15,6 +15,10 @@ class BatchRemoveCommand extends AbstractBatchCommand
     protected static $defaultName = 'extras:batch:remove';
     protected static $defaultDescription = 'Remove multiple extras in batch mode';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -23,6 +27,11 @@ class BatchRemoveCommand extends AbstractBatchCommand
             ->addOption(CommandOptions::ALL->value, 'a', InputOption::VALUE_NONE, 'Remove all installed extras');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);

@@ -14,6 +14,10 @@ class RemoveCommand extends AbstractExtrasCommand
     protected static $defaultName = 'extras:remove';
     protected static $defaultDescription = 'Remove EvolutionCMS extra';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -22,6 +26,11 @@ class RemoveCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');

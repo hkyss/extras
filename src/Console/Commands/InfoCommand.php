@@ -15,6 +15,10 @@ class InfoCommand extends AbstractExtrasCommand
     protected static $defaultName = 'extras:info';
     protected static $defaultDescription = 'Show detailed information about an extra';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -25,6 +29,11 @@ class InfoCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $package = $input->getArgument('package');

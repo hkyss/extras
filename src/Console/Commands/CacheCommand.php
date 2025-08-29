@@ -20,6 +20,10 @@ class CacheCommand extends AbstractExtrasCommand
         $this->cacheService = $cacheService;
     }
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -29,6 +33,11 @@ class CacheCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::STATS->value, null, InputOption::VALUE_NONE, 'Show cache statistics');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $clear = $input->getOption(CommandOptions::CLEAR->value);

@@ -12,6 +12,7 @@ use hkyss\Extras\Console\Commands\BatchUpdateCommand;
 use hkyss\Extras\Console\Commands\BatchRemoveCommand;
 use hkyss\Extras\Console\Commands\InfoCommand;
 use hkyss\Extras\Console\Commands\CacheCommand;
+use hkyss\Extras\Console\Commands\HelpCommand;
 use hkyss\Extras\Services\ExtrasService;
 use hkyss\Extras\Services\CacheService;
 use hkyss\Extras\Managers\RepositoryManager;
@@ -81,6 +82,7 @@ class ExtrasServiceProvider extends ServiceProvider
             BatchRemoveCommand::class,
             InfoCommand::class,
             CacheCommand::class,
+            HelpCommand::class,
         ]);
 
         $this->publishes([

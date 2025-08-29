@@ -15,6 +15,10 @@ class BatchUpdateCommand extends AbstractBatchCommand
     protected static $defaultName = 'extras:batch:update';
     protected static $defaultDescription = 'Update multiple extras in batch mode';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -22,6 +26,11 @@ class BatchUpdateCommand extends AbstractBatchCommand
             ->configureBatchOptions();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);

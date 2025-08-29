@@ -13,6 +13,10 @@ class InstallCommand extends AbstractExtrasCommand
     protected static $defaultName = 'extras:install';
     protected static $defaultDescription = 'Install EvolutionCMS extra';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -22,6 +26,11 @@ class InstallCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::NO_DEPS->value, null, InputOption::VALUE_NONE, 'Skip dependency installation');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');

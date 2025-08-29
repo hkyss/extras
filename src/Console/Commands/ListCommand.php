@@ -16,6 +16,10 @@ class ListCommand extends AbstractExtrasCommand
     protected static $defaultName = 'extras:list';
     protected static $defaultDescription = 'List available EvolutionCMS extras';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -25,6 +29,11 @@ class ListCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $installedOnly = $input->getOption(CommandOptions::INSTALLED->value);

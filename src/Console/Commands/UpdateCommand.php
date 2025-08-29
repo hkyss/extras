@@ -14,6 +14,10 @@ class UpdateCommand extends AbstractExtrasCommand
     protected static $defaultName = 'extras:update';
     protected static $defaultDescription = 'Update EvolutionCMS extra';
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
@@ -23,6 +27,11 @@ class UpdateCommand extends AbstractExtrasCommand
             ->addOption(CommandOptions::CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for updates without installing');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
