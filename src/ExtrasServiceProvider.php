@@ -34,16 +34,21 @@ class ExtrasServiceProvider extends ServiceProvider
             
             $manager->addRepository(new ApiRepository(null, $cacheService));
             
-            $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras', $cacheService));
-            
             $repositories = config('extras.repositories', []);
+            $addedOrganizations = [];
+            
             foreach ($repositories as $repo) {
                 if (isset($repo['type']) && $repo['type'] === 'github') {
-                    $manager->addRepository(new GitHubRepository(
-                        $repo['organization'],
-                        $repo['name'] ?? 'GitHub',
-                        $cacheService
-                    ));
+                    $organization = $repo['organization'];
+                    
+                    if (!in_array($organization, $addedOrganizations)) {
+                        $manager->addRepository(new GitHubRepository(
+                            $organization,
+                            $repo['name'] ?? 'GitHub',
+                            $cacheService
+                        ));
+                        $addedOrganizations[] = $organization;
+                    }
                 }
             }
             
