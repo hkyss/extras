@@ -25,7 +25,7 @@ class ExtrasBatchInstallCommand extends BaseBatchCommand
         $packages = $this->getPackagesList($input);
         
         if (empty($packages)) {
-            $output->writeln('<error>No packages specified for installation.</error>');
+            $output->writeln('<error>No packages specified for installation</error>');
             $output->writeln('Usage: php artisan extras:batch:install package1 package2 package3');
             $output->writeln('   or: php artisan extras:batch:install --file=packages.txt');
             return Command::FAILURE;
@@ -43,7 +43,7 @@ class ExtrasBatchInstallCommand extends BaseBatchCommand
 
         if (!$force) {
             if (!$this->confirmBatchOperation($input, $output, $packages, 'install')) {
-                $output->writeln('<comment>Installation cancelled.</comment>');
+                $output->writeln('<comment>Installation cancelled</comment>');
                 return Command::SUCCESS;
             }
         }
@@ -64,7 +64,7 @@ class ExtrasBatchInstallCommand extends BaseBatchCommand
      */
     private function performBatchInstallation(OutputInterface $output, array $packages, bool $continueOnError, int $parallel): int
     {
-        $output->writeln('<info>Starting batch installation...</info>');
+        $output->writeln('<info>Starting batch installation</info>');
         $output->writeln('');
 
         $results = $this->processPackages(

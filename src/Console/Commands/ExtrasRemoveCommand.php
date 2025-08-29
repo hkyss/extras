@@ -55,7 +55,7 @@ class ExtrasRemoveCommand extends BaseExtrasCommand
                 }
             }
 
-            $output->writeln("\n<info>Removing package...</info>");
+            $output->writeln("\n<info>Removing package</info>");
 
             $this->logOperation('remove_started', [
                 'package' => $packageName,
@@ -67,16 +67,16 @@ class ExtrasRemoveCommand extends BaseExtrasCommand
             $progressBar->start();
 
             $progressBar->advance();
-            $progressBar->setMessage('Removing from composer.json...');
+            $progressBar->setMessage('Removing from composer.json');
 
             $success = $this->extrasService->removeExtra($packageName);
 
             if ($success) {
                 $progressBar->advance();
-                $progressBar->setMessage('Package removed successfully!');
+                $progressBar->setMessage('Package removed successfully');
                 $progressBar->finish();
 
-                $output->writeln("\n<info>Package '{$packageName}' removed successfully!</info>");
+                $output->writeln("\n<info>Package '{$packageName}' removed successfully</info>");
                 
                 $this->logOperation('remove_completed', [
                     'package' => $packageName

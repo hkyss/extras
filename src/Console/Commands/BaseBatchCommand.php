@@ -45,7 +45,7 @@ abstract class BaseBatchCommand extends BaseExtrasCommand
     protected function validatePackagesList(array $packages, OutputInterface $output): bool
     {
         if (empty($packages)) {
-            $output->writeln('<error>No packages specified for operation.</error>');
+            $output->writeln('<error>No packages specified for operation</error>');
             return false;
         }
 
@@ -165,15 +165,15 @@ abstract class BaseBatchCommand extends BaseExtrasCommand
         $errors = [];
 
         if ($parallel > 1 && count($packages) > 1) {
-            $output->writeln("<info>Processing packages in parallel (max: {$parallel})...</info>");
+            $output->writeln("<info>Processing packages in parallel (max: {$parallel})</info>");
             
             foreach ($packages as $package) {
                 try {
                     $results[$package] = $processor($package);
-                    $output->writeln("  ✓ {$package}");
+                    $output->writeln("  Success: {$package}");
                 } catch (\Exception $e) {
                     $errors[$package] = $e->getMessage();
-                    $output->writeln("  ✗ {$package}: {$e->getMessage()}");
+                    $output->writeln("  Error: {$package}: {$e->getMessage()}");
                     
                     if (!$continueOnError) {
                         throw $e;
@@ -184,10 +184,10 @@ abstract class BaseBatchCommand extends BaseExtrasCommand
             foreach ($packages as $package) {
                 try {
                     $results[$package] = $processor($package);
-                    $output->writeln("  ✓ {$package}");
+                    $output->writeln("  Success: {$package}");
                 } catch (\Exception $e) {
                     $errors[$package] = $e->getMessage();
-                    $output->writeln("  ✗ {$package}: {$e->getMessage()}");
+                    $output->writeln("  Error: {$package}: {$e->getMessage()}");
                     
                     if (!$continueOnError) {
                         throw $e;
@@ -223,7 +223,7 @@ abstract class BaseBatchCommand extends BaseExtrasCommand
             
             if ($output->isVerbose()) {
                 $output->writeln('');
-                $output->writeln('<comment>Failed packages:</comment>');
+                $output->writeln('<comment>Failed packages</comment>');
                 foreach ($results['errors'] as $package => $error) {
                     $output->writeln("  - {$package}: {$error}");
                 }

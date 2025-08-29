@@ -69,9 +69,9 @@ class ExtrasCacheCommand extends BaseExtrasCommand
      */
     private function clearCache(OutputInterface $output): void
     {
-        $output->writeln('<info>Clearing extras cache...</info>');
+        $output->writeln('<info>Clearing extras cache</info>');
         $this->cacheService->clear();
-        $output->writeln('<info>Cache cleared successfully!</info>');
+        $output->writeln('<info>Cache cleared successfully</info>');
     }
 
     /**
@@ -79,10 +79,10 @@ class ExtrasCacheCommand extends BaseExtrasCommand
      */
     private function refreshCache(OutputInterface $output): void
     {
-        $output->writeln('<info>Refreshing extras cache...</info>');
+        $output->writeln('<info>Refreshing extras cache</info>');
         $this->cacheService->clear();
-        $output->writeln('<info>Cache refreshed successfully!</info>');
-        $output->writeln('<comment>Next command will rebuild cache automatically.</comment>');
+        $output->writeln('<info>Cache refreshed successfully</info>');
+        $output->writeln('<comment>Next command will rebuild cache automatically</comment>');
     }
 
     /**
@@ -98,7 +98,7 @@ class ExtrasCacheCommand extends BaseExtrasCommand
         $output->writeln('Cache Path: <info>' . config('extras.cache.path', 'cache/extras/') . '</info>');
         
         $output->writeln('');
-        $output->writeln('<comment>Use --stats to see detailed cache statistics.</comment>');
+        $output->writeln('<comment>Use --stats to see detailed cache statistics</comment>');
     }
 
     /**
@@ -111,7 +111,7 @@ class ExtrasCacheCommand extends BaseExtrasCommand
         
         $output->writeln('Cache is enabled and ready for use.');
         $output->writeln('');
-        $output->writeln('<comment>Note: Detailed statistics depend on cache driver implementation.</comment>');
+        $output->writeln('<comment>Note: Detailed statistics depend on cache driver implementation</comment>');
     }
 
     /**

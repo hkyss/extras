@@ -72,24 +72,24 @@ class ExtrasUpdateCommand extends BaseExtrasCommand
             return Command::SUCCESS;
         }
 
-        $output->writeln("\n<info>Updating package...</info>");
+                    $output->writeln("\n<info>Updating package</info>");
 
         $progressBar = new ProgressBar($output, 3);
         $progressBar->start();
 
         $progressBar->advance();
-        $progressBar->setMessage('Updating composer.json...');
+                    $progressBar->setMessage('Updating composer.json');
 
         $success = $this->extrasService->updateExtra($packageName, $version);
 
         if ($success) {
             $progressBar->advance();
-            $progressBar->setMessage('Running composer update...');
+            $progressBar->setMessage('Running composer update');
             $progressBar->advance();
-            $progressBar->setMessage('Update completed!');
+            $progressBar->setMessage('Update completed');
             $progressBar->finish();
 
-            $output->writeln("\n<info>Package '{$packageName}' updated successfully!</info>");
+                            $output->writeln("\n<info>Package '{$packageName}' updated successfully</info>");
             return Command::SUCCESS;
         } else {
             $progressBar->finish();
@@ -156,7 +156,7 @@ class ExtrasUpdateCommand extends BaseExtrasCommand
             }
         }
 
-        $output->writeln("\n<info>Update summary:</info>");
+        $output->writeln("\n<info>Update summary</info>");
         $output->writeln("Updated: <info>{$updatedCount}</info>");
         $output->writeln("Failed: <error>{$failedCount}</error>");
 

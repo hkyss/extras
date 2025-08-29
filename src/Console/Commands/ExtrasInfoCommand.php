@@ -75,7 +75,7 @@ class ExtrasInfoCommand extends BaseExtrasCommand
     private function outputTable(OutputInterface $output, Extras $extra, bool $verbose, bool $showDependencies, bool $showReleases): void
     {
         $output->writeln('');
-        $output->writeln("<info>📦 Package Information: {$extra->getDisplayName()}</info>");
+        $output->writeln("<info>Package Information: {$extra->getDisplayName()}</info>");
         $output->writeln('');
 
         $table = new Table($output);
@@ -88,7 +88,7 @@ class ExtrasInfoCommand extends BaseExtrasCommand
         $table->addRow(['Description', $extra->description]);
         $table->addRow(['Author', $extra->author]);
         $table->addRow(['Repository', $extra->repository ?: 'Unknown']);
-        $table->addRow(['Status', $extra->isInstalled() ? '<info>✅ Installed</info>' : '<comment>📦 Available</comment>']);
+                    $table->addRow(['Status', $extra->isInstalled() ? '<info>Installed</info>' : '<comment>Available</comment>']);
 
         if ($extra->isInstalled()) {
             $installed = $this->extrasService->getInstalledExtras();
@@ -199,12 +199,12 @@ class ExtrasInfoCommand extends BaseExtrasCommand
     private function showDependencies(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>🔗 Dependencies</info>');
+        $output->writeln('<info>Dependencies</info>');
         
         $dependencies = $this->getDependencies($extra);
         
         if (empty($dependencies)) {
-            $output->writeln('<comment>No dependencies found.</comment>');
+            $output->writeln('<comment>No dependencies found</comment>');
             return;
         }
 
@@ -228,12 +228,12 @@ class ExtrasInfoCommand extends BaseExtrasCommand
     private function showReleases(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>📋 Release History</info>');
+        $output->writeln('<info>Release History</info>');
         
         $releases = $this->getReleases($extra);
         
         if (empty($releases)) {
-            $output->writeln('<comment>No release information available.</comment>');
+            $output->writeln('<comment>No release information available</comment>');
             return;
         }
 
@@ -259,7 +259,7 @@ class ExtrasInfoCommand extends BaseExtrasCommand
     private function showAdditionalInfo(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>📊 Additional Information</info>');
+        $output->writeln('<info>Additional Information</info>');
         
         $table = new Table($output);
         $table->setHeaders(['Property', 'Value']);
@@ -287,7 +287,7 @@ class ExtrasInfoCommand extends BaseExtrasCommand
         if ($table->getRows()) {
             $table->render();
         } else {
-            $output->writeln('<comment>No additional information available.</comment>');
+            $output->writeln('<comment>No additional information available</comment>');
         }
     }
 

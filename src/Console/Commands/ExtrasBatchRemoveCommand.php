@@ -29,7 +29,7 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
         $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
 
         if (empty($packages)) {
-            $output->writeln('<error>No packages specified for removal.</error>');
+            $output->writeln('<error>No packages specified for removal</error>');
             $output->writeln('Usage: php artisan extras:batch:remove package1 package2 package3');
             $output->writeln('   or: php artisan extras:batch:remove --file=packages.txt');
             $output->writeln('   or: php artisan extras:batch:remove --all');
@@ -46,7 +46,7 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
 
         if (!$force) {
             if (!$this->confirmRemoval($input, $output, $packages)) {
-                $output->writeln('<comment>Removal cancelled.</comment>');
+                $output->writeln('<comment>Removal cancelled</comment>');
                 return Command::SUCCESS;
             }
         }
@@ -123,9 +123,9 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
      */
     private function confirmRemoval(InputInterface $input, OutputInterface $output, array $packages): bool
     {
-        $output->writeln('<warning>WARNING: This action cannot be undone!</warning>');
+        $output->writeln('<warning>Warning: This action cannot be undone</warning>');
         $output->writeln('');
-        $output->writeln('<info>Packages to remove:</info>');
+        $output->writeln('<info>Packages to remove</info>');
         foreach ($packages as $package) {
             $output->writeln("  - {$package}");
         }
@@ -158,7 +158,7 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
      */
     private function performBatchRemoval(OutputInterface $output, array $packages, bool $continueOnError, bool $keepDeps): int
     {
-        $output->writeln('<info>Starting batch removal...</info>');
+        $output->writeln('<info>Starting batch removal</info>');
         $output->writeln('');
 
         $progressBar = new ProgressBar($output, count($packages));
@@ -209,13 +209,13 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
      */
     private function displayResults(OutputInterface $output, int $successCount, int $errorCount, array $errors): void
     {
-        $output->writeln('<info>Batch removal completed!</info>');
+                    $output->writeln('<info>Batch removal completed</info>');
         $output->writeln("Successfully removed: <info>{$successCount}</info> packages");
         
         if ($errorCount > 0) {
             $output->writeln("Failed to remove: <error>{$errorCount}</error> packages");
             $output->writeln('');
-            $output->writeln('<comment>Errors:</comment>');
+            $output->writeln('<comment>Errors</comment>');
             foreach ($errors as $error) {
                 $output->writeln("  - {$error}");
             }

@@ -43,7 +43,7 @@ class ExtrasInstallCommand extends BaseExtrasCommand
                 return Command::FAILURE;
             }
 
-            $output->writeln("<info>Installing {$packageName}...</info>");
+            $output->writeln("<info>Installing {$packageName}</info>");
 
             $extra = $this->getValidatedPackage($packageName, $output);
             if (!$extra) {
@@ -51,20 +51,20 @@ class ExtrasInstallCommand extends BaseExtrasCommand
             }
 
             if ($extra->isInstalled() && !$force) {
-                $output->writeln("<comment>Package '{$packageName}' is already installed. Use --force to reinstall.</comment>");
+                $output->writeln("<comment>Package '{$packageName}' is already installed. Use --force to reinstall</comment>");
                 return Command::SUCCESS;
             }
 
             $this->displayPackageInfo($extra, $output, $version);
 
             if (!empty($extra->require)) {
-                $output->writeln("\n<comment>Dependencies:</comment>");
+                $output->writeln("\n<comment>Dependencies</comment>");
                 foreach ($extra->require as $dep => $depVersion) {
                     $output->writeln("  - {$dep}: {$depVersion}");
                 }
             }
 
-            $output->writeln("\n<info>Installing package...</info>");
+                            $output->writeln("\n<info>Installing package</info>");
 
             $this->logOperation('install_started', [
                 'package' => $packageName,
@@ -77,19 +77,19 @@ class ExtrasInstallCommand extends BaseExtrasCommand
             $progressBar->start();
 
             $progressBar->advance();
-            $progressBar->setMessage('Adding to composer.json...');
+            $progressBar->setMessage('Adding to composer.json');
 
             $success = $this->extrasService->installExtra($packageName, $version);
 
             $progressBar->advance();
-            $progressBar->setMessage('Running composer install...');
+            $progressBar->setMessage('Running composer install');
 
             if ($success) {
                 $progressBar->advance();
-                $progressBar->setMessage('Installation completed!');
+                $progressBar->setMessage('Installation completed');
                 $progressBar->finish();
 
-                $output->writeln("\n<info>Package '{$packageName}' installed successfully!</info>");
+                $output->writeln("\n<info>Package '{$packageName}' installed successfully</info>");
                 
                 $this->logOperation('install_completed', [
                     'package' => $packageName,
@@ -97,7 +97,7 @@ class ExtrasInstallCommand extends BaseExtrasCommand
                 ]);
                 
                 if (!empty($extra->extra['evolutioncms']['instructions'] ?? '')) {
-                    $output->writeln("\n<comment>Installation instructions:</comment>");
+                    $output->writeln("\n<comment>Installation instructions</comment>");
                     $output->writeln($extra->extra['evolutioncms']['instructions']);
                 }
 

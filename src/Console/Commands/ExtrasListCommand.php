@@ -139,7 +139,7 @@ class ExtrasListCommand extends BaseExtrasCommand
     private function handleInteractiveMode(InputInterface $input, OutputInterface $output, array $extras): void
     {
         if (empty($extras)) {
-            $output->writeln('<comment>No extras available for installation.</comment>');
+            $output->writeln('<comment>No extras available for installation</comment>');
             return;
         }
 
@@ -152,7 +152,7 @@ class ExtrasListCommand extends BaseExtrasCommand
         $availableExtras = array_filter($extras, fn($extra) => !$extra->isInstalled());
         
         if (empty($availableExtras)) {
-            $output->writeln('<comment>All available extras are already installed.</comment>');
+            $output->writeln('<comment>All available extras are already installed</comment>');
             return;
         }
 
@@ -172,7 +172,7 @@ class ExtrasListCommand extends BaseExtrasCommand
         $selectedIndex = $helper->ask($input, $output, $question);
         
         if ($selectedIndex === 0) {
-            $output->writeln('<comment>Installation cancelled.</comment>');
+            $output->writeln('<comment>Installation cancelled</comment>');
             return;
         }
 
@@ -191,16 +191,16 @@ class ExtrasListCommand extends BaseExtrasCommand
         );
 
         if (!$helper->ask($input, $output, $confirmQuestion)) {
-            $output->writeln('<comment>Installation cancelled.</comment>');
+            $output->writeln('<comment>Installation cancelled</comment>');
             return;
         }
 
         $output->writeln('');
-        $output->writeln('<info>Installing ' . $selectedExtra->getDisplayName() . '...</info>');
+        $output->writeln('<info>Installing ' . $selectedExtra->getDisplayName() . '</info>');
 
         try {
             $this->extrasService->installExtra($selectedExtra->name);
-            $output->writeln('<info>Successfully installed ' . $selectedExtra->getDisplayName() . '!</info>');
+            $output->writeln('<info>Successfully installed ' . $selectedExtra->getDisplayName() . '</info>');
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to install ' . $selectedExtra->getDisplayName() . ': ' . $e->getMessage() . '</error>');
         }

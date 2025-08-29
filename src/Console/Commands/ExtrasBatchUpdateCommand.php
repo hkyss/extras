@@ -42,7 +42,7 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
 
         if (!$force) {
             if (!$this->confirmUpdate($input, $output, $packages)) {
-                $output->writeln('<comment>Update cancelled.</comment>');
+                $output->writeln('<comment>Update cancelled</comment>');
                 return Command::SUCCESS;
             }
         }
@@ -79,7 +79,7 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
      */
     private function checkForUpdates(OutputInterface $output, array $packages): int
     {
-        $output->writeln('<info>Checking for available updates...</info>');
+        $output->writeln('<info>Checking for available updates</info>');
         $output->writeln('');
 
         $table = new \Symfony\Component\Console\Helper\Table($output);
@@ -112,10 +112,10 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
         $output->writeln('');
 
         if ($hasUpdates) {
-            $output->writeln('<info>Updates are available for some packages.</info>');
+            $output->writeln('<info>Updates are available for some packages</info>');
             $output->writeln('Run without --check-only to perform the updates.');
         } else {
-            $output->writeln('<comment>All packages are up to date.</comment>');
+            $output->writeln('<comment>All packages are up to date</comment>');
         }
 
         return Command::SUCCESS;
@@ -168,7 +168,7 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
      */
     private function confirmUpdate(InputInterface $input, OutputInterface $output, array $packages): bool
     {
-        $output->writeln('<info>Packages to update:</info>');
+        $output->writeln('<info>Packages to update</info>');
         foreach ($packages as $package) {
             $output->writeln("  - {$package}");
         }
@@ -192,7 +192,7 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
      */
     private function performBatchUpdate(OutputInterface $output, array $packages, bool $continueOnError, int $parallel): int
     {
-        $output->writeln('<info>Starting batch update...</info>');
+        $output->writeln('<info>Starting batch update</info>');
         $output->writeln('');
 
         $progressBar = new ProgressBar($output, count($packages));
@@ -243,13 +243,13 @@ class ExtrasBatchUpdateCommand extends BaseBatchCommand
      */
     private function displayResults(OutputInterface $output, int $successCount, int $errorCount, array $errors): void
     {
-        $output->writeln('<info>Batch update completed!</info>');
+                    $output->writeln('<info>Batch update completed</info>');
         $output->writeln("Successfully updated: <info>{$successCount}</info> packages");
         
         if ($errorCount > 0) {
             $output->writeln("Failed to update: <error>{$errorCount}</error> packages");
             $output->writeln('');
-            $output->writeln('<comment>Errors:</comment>');
+            $output->writeln('<comment>Errors</comment>');
             foreach ($errors as $error) {
                 $output->writeln("  - {$error}");
             }
