@@ -1,9 +1,9 @@
 <?php
 
-namespace EvolutionCMS\Extras\Managers;
+namespace hkyss\Extras\Managers;
 
-use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Interfaces\RepositoryInterface;
+use hkyss\Extras\Models\Extras;
 
 class RepositoryManager
 {
@@ -27,18 +27,43 @@ class RepositoryManager
     }
 
     /**
+     * @return RepositoryInterface[]
+     */
+    public function getUniqueRepositories(): array
+    {
+        $uniqueRepositories = [];
+        $seenNames = [];
+        
+        foreach ($this->repositories as $repository) {
+            $name = $repository->getName();
+            if (!in_array($name, $seenNames)) {
+                $uniqueRepositories[] = $repository;
+                $seenNames[] = $name;
+            }
+        }
+        
+        return $uniqueRepositories;
+    }
+
+    /**
      * @return Extras[]
      */
     public function getAllExtras(): array
     {
         $allExtras = [];
+        $seenPackages = [];
         
         foreach ($this->repositories as $repository) {
             try {
                 $extras = $repository->getAll();
                 foreach ($extras as $extra) {
                     $extra->repository = $repository->getName();
-                    $allExtras[] = $extra;
+                    
+                    $packageKey = $extra->name;
+                    if (!isset($seenPackages[$packageKey])) {
+                        $seenPackages[$packageKey] = true;
+                        $allExtras[] = $extra;
+                    }
                 }
             } catch (\Exception $e) {
                 continue;
@@ -76,13 +101,19 @@ class RepositoryManager
     public function searchExtras(string $search): array
     {
         $results = [];
+        $seenPackages = [];
         
         foreach ($this->repositories as $repository) {
             try {
                 $extras = $repository->search($search);
                 foreach ($extras as $extra) {
                     $extra->repository = $repository->getName();
-                    $results[] = $extra;
+                    
+                    $packageKey = $extra->name;
+                    if (!isset($seenPackages[$packageKey])) {
+                        $seenPackages[$packageKey] = true;
+                        $results[] = $extra;
+                    }
                 }
             } catch (\Exception $e) {
                 continue;

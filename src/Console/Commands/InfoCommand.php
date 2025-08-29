@@ -1,52 +1,57 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasInfoCommand extends Command
+class InfoCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:info';
     protected static $defaultDescription = 'Show detailed information about an extra';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
-
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to get info for')
-            ->addOption('info-format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
-            ->addOption('verbose', 'v', InputOption::VALUE_NONE, 'Show verbose information')
-            ->addOption('dependencies', null, InputOption::VALUE_NONE, 'Show dependency information')
-            ->addOption('releases', null, InputOption::VALUE_NONE, 'Show release history');
+            ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
+            ->addOption(CommandOptions::VERBOSE->value, 'v', InputOption::VALUE_NONE, 'Show verbose information')
+            ->addOption(CommandOptions::DEPENDENCIES->value, null, InputOption::VALUE_NONE, 'Show dependency information')
+            ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $package = $input->getArgument('package');
-        $format = $input->getOption('info-format');
-        $verbose = $input->getOption('verbose');
-        $showDependencies = $input->getOption('dependencies');
-        $showReleases = $input->getOption('releases');
+        
+        $format = $input->getOption(CommandOptions::FORMAT->value) ?: 'table';
+        $verbose = $input->getOption(CommandOptions::VERBOSE->value);
+        $showDependencies = $input->getOption(CommandOptions::DEPENDENCIES->value);
+        $showReleases = $input->getOption(CommandOptions::RELEASES->value);
 
         try {
-            $extra = $this->extrasService->getExtra($package);
-            
+            if (!$this->validatePackageName($package)) {
+                $output->writeln("<error>Invalid package name format: {$package}</error>");
+                $output->writeln("<comment>Package name should be in format: vendor/package</comment>");
+                return Command::FAILURE;
+            }
+
+            $extra = $this->getValidatedPackage($package, $output);
             if (!$extra) {
-                $output->writeln("<error>Package '{$package}' not found.</error>");
                 return Command::FAILURE;
             }
 
@@ -64,8 +69,7 @@ class ExtrasInfoCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $output->writeln("<error>Error getting info for '{$package}': {$e->getMessage()}</error>");
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'info');
         }
     }
 
@@ -80,7 +84,7 @@ class ExtrasInfoCommand extends Command
     private function outputTable(OutputInterface $output, Extras $extra, bool $verbose, bool $showDependencies, bool $showReleases): void
     {
         $output->writeln('');
-        $output->writeln("<info>📦 Package Information: {$extra->getDisplayName()}</info>");
+        $output->writeln("<info>Package Information: {$extra->getDisplayName()}</info>");
         $output->writeln('');
 
         $table = new Table($output);
@@ -93,7 +97,7 @@ class ExtrasInfoCommand extends Command
         $table->addRow(['Description', $extra->description]);
         $table->addRow(['Author', $extra->author]);
         $table->addRow(['Repository', $extra->repository ?: 'Unknown']);
-        $table->addRow(['Status', $extra->isInstalled() ? '<info>✅ Installed</info>' : '<comment>📦 Available</comment>']);
+                    $table->addRow(['Status', $extra->isInstalled() ? '<info>Installed</info>' : '<comment>Available</comment>']);
 
         if ($extra->isInstalled()) {
             $installed = $this->extrasService->getInstalledExtras();
@@ -204,12 +208,12 @@ class ExtrasInfoCommand extends Command
     private function showDependencies(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>🔗 Dependencies</info>');
+        $output->writeln('<info>Dependencies</info>');
         
         $dependencies = $this->getDependencies($extra);
         
         if (empty($dependencies)) {
-            $output->writeln('<comment>No dependencies found.</comment>');
+            $output->writeln('<comment>No dependencies found</comment>');
             return;
         }
 
@@ -233,12 +237,12 @@ class ExtrasInfoCommand extends Command
     private function showReleases(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>📋 Release History</info>');
+        $output->writeln('<info>Release History</info>');
         
         $releases = $this->getReleases($extra);
         
         if (empty($releases)) {
-            $output->writeln('<comment>No release information available.</comment>');
+            $output->writeln('<comment>No release information available</comment>');
             return;
         }
 
@@ -264,7 +268,7 @@ class ExtrasInfoCommand extends Command
     private function showAdditionalInfo(OutputInterface $output, Extras $extra): void
     {
         $output->writeln('');
-        $output->writeln('<info>📊 Additional Information</info>');
+        $output->writeln('<info>Additional Information</info>');
         
         $table = new Table($output);
         $table->setHeaders(['Property', 'Value']);
@@ -292,7 +296,7 @@ class ExtrasInfoCommand extends Command
         if ($table->getRows()) {
             $table->render();
         } else {
-            $output->writeln('<comment>No additional information available.</comment>');
+            $output->writeln('<comment>No additional information available</comment>');
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace EvolutionCMS\Extras\Interfaces;
+namespace hkyss\Extras\Interfaces;
 
 interface PackageManagerInterface
 {

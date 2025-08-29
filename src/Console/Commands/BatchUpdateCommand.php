@@ -1,46 +1,41 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use EvolutionCMS\Extras\Services\ExtrasService;
+use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasBatchUpdateCommand extends Command
+class BatchUpdateCommand extends AbstractBatchCommand
 {
     protected static $defaultName = 'extras:batch:update';
     protected static $defaultDescription = 'Update multiple extras in batch mode';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
-
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to update (leave empty for all installed)')
-            ->addOption('update-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('batch-update-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('batch-update-continue-on-error', null, InputOption::VALUE_NONE, 'Continue update even if some packages fail')
-            ->addOption('batch-update-dry-run', null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating')
-            ->addOption('batch-check-only', null, InputOption::VALUE_NONE, 'Only check for available updates')
-            ->addOption('batch-update-parallel', null, InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1)', '1');
+            ->configureBatchOptions();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $checkOnly = $input->getOption('batch-check-only');
-        $dryRun = $input->getOption('batch-update-dry-run');
+        $checkOnly = $input->getOption(CommandOptions::CHECK_ONLY->value);
+        $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
 
         if ($checkOnly) {
             return $this->checkForUpdates($output, $packages);
@@ -50,13 +45,13 @@ class ExtrasBatchUpdateCommand extends Command
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('batch-update-force');
-        $continueOnError = $input->getOption('batch-update-continue-on-error');
-        $parallel = (int) $input->getOption('batch-update-parallel');
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $continueOnError = $input->getOption(CommandOptions::CONTINUE_ON_ERROR->value);
+        $parallel = (int) ($input->getOption(CommandOptions::PARALLEL->value) ?: '1');
 
         if (!$force) {
             if (!$this->confirmUpdate($input, $output, $packages)) {
-                $output->writeln('<comment>Update cancelled.</comment>');
+                $output->writeln('<comment>Update cancelled</comment>');
                 return Command::SUCCESS;
             }
         }
@@ -71,7 +66,7 @@ class ExtrasBatchUpdateCommand extends Command
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('update-file');
+        $file = $input->getOption(CommandOptions::FILE->value);
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -93,7 +88,7 @@ class ExtrasBatchUpdateCommand extends Command
      */
     private function checkForUpdates(OutputInterface $output, array $packages): int
     {
-        $output->writeln('<info>Checking for available updates...</info>');
+        $output->writeln('<info>Checking for available updates</info>');
         $output->writeln('');
 
         $table = new \Symfony\Component\Console\Helper\Table($output);
@@ -126,10 +121,10 @@ class ExtrasBatchUpdateCommand extends Command
         $output->writeln('');
 
         if ($hasUpdates) {
-            $output->writeln('<info>Updates are available for some packages.</info>');
+            $output->writeln('<info>Updates are available for some packages</info>');
             $output->writeln('Run without --check-only to perform the updates.');
         } else {
-            $output->writeln('<comment>All packages are up to date.</comment>');
+            $output->writeln('<comment>All packages are up to date</comment>');
         }
 
         return Command::SUCCESS;
@@ -182,7 +177,7 @@ class ExtrasBatchUpdateCommand extends Command
      */
     private function confirmUpdate(InputInterface $input, OutputInterface $output, array $packages): bool
     {
-        $output->writeln('<info>Packages to update:</info>');
+        $output->writeln('<info>Packages to update</info>');
         foreach ($packages as $package) {
             $output->writeln("  - {$package}");
         }
@@ -206,7 +201,7 @@ class ExtrasBatchUpdateCommand extends Command
      */
     private function performBatchUpdate(OutputInterface $output, array $packages, bool $continueOnError, int $parallel): int
     {
-        $output->writeln('<info>Starting batch update...</info>');
+        $output->writeln('<info>Starting batch update</info>');
         $output->writeln('');
 
         $progressBar = new ProgressBar($output, count($packages));
@@ -257,13 +252,13 @@ class ExtrasBatchUpdateCommand extends Command
      */
     private function displayResults(OutputInterface $output, int $successCount, int $errorCount, array $errors): void
     {
-        $output->writeln('<info>Batch update completed!</info>');
+                    $output->writeln('<info>Batch update completed</info>');
         $output->writeln("Successfully updated: <info>{$successCount}</info> packages");
         
         if ($errorCount > 0) {
             $output->writeln("Failed to update: <error>{$errorCount}</error> packages");
             $output->writeln('');
-            $output->writeln('<comment>Errors:</comment>');
+            $output->writeln('<comment>Errors</comment>');
             foreach ($errors as $error) {
                 $output->writeln("  - {$error}");
             }

@@ -1,24 +1,25 @@
 <?php
 
-namespace EvolutionCMS\Extras;
+namespace hkyss\Extras;
 
 use Illuminate\Support\ServiceProvider;
-use EvolutionCMS\Extras\Console\Commands\ExtrasListCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchInstallCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchUpdateCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchRemoveCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasInfoCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasCacheCommand;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Services\CacheService;
-use EvolutionCMS\Extras\Managers\RepositoryManager;
-use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
-use EvolutionCMS\Extras\Repositories\ApiRepository;
-use EvolutionCMS\Extras\Repositories\GitHubRepository;
-use EvolutionCMS\Extras\Managers\ComposerPackageManager;
+use hkyss\Extras\Console\Commands\ListCommand;
+use hkyss\Extras\Console\Commands\InstallCommand;
+use hkyss\Extras\Console\Commands\RemoveCommand;
+use hkyss\Extras\Console\Commands\UpdateCommand;
+use hkyss\Extras\Console\Commands\BatchInstallCommand;
+use hkyss\Extras\Console\Commands\BatchUpdateCommand;
+use hkyss\Extras\Console\Commands\BatchRemoveCommand;
+use hkyss\Extras\Console\Commands\InfoCommand;
+use hkyss\Extras\Console\Commands\CacheCommand;
+use hkyss\Extras\Console\Commands\HelpCommand;
+use hkyss\Extras\Services\ExtrasService;
+use hkyss\Extras\Services\CacheService;
+use hkyss\Extras\Managers\RepositoryManager;
+use hkyss\Extras\Interfaces\PackageManagerInterface;
+use hkyss\Extras\Repositories\ApiRepository;
+use hkyss\Extras\Repositories\GitHubRepository;
+use hkyss\Extras\Managers\ComposerPackageManager;
 
 class ExtrasServiceProvider extends ServiceProvider
 {
@@ -34,16 +35,21 @@ class ExtrasServiceProvider extends ServiceProvider
             
             $manager->addRepository(new ApiRepository(null, $cacheService));
             
-            $manager->addRepository(new GitHubRepository('evolution-cms-extras', 'EvolutionCMS Extras', $cacheService));
-            
             $repositories = config('extras.repositories', []);
+            $addedOrganizations = [];
+            
             foreach ($repositories as $repo) {
                 if (isset($repo['type']) && $repo['type'] === 'github') {
-                    $manager->addRepository(new GitHubRepository(
-                        $repo['organization'],
-                        $repo['name'] ?? 'GitHub',
-                        $cacheService
-                    ));
+                    $organization = $repo['organization'];
+                    
+                    if (!in_array($organization, $addedOrganizations)) {
+                        $manager->addRepository(new GitHubRepository(
+                            $organization,
+                            $repo['name'] ?? 'GitHub',
+                            $cacheService
+                        ));
+                        $addedOrganizations[] = $organization;
+                    }
                 }
             }
             
@@ -67,15 +73,16 @@ class ExtrasServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/extras.php', 'extras');
 
         $this->commands([
-            ExtrasListCommand::class,
-            ExtrasInstallCommand::class,
-            ExtrasRemoveCommand::class,
-            ExtrasUpdateCommand::class,
-            ExtrasBatchInstallCommand::class,
-            ExtrasBatchUpdateCommand::class,
-            ExtrasBatchRemoveCommand::class,
-            ExtrasInfoCommand::class,
-            ExtrasCacheCommand::class,
+            ListCommand::class,
+            InstallCommand::class,
+            RemoveCommand::class,
+            UpdateCommand::class,
+            BatchInstallCommand::class,
+            BatchUpdateCommand::class,
+            BatchRemoveCommand::class,
+            InfoCommand::class,
+            CacheCommand::class,
+            HelpCommand::class,
         ]);
 
         $this->publishes([

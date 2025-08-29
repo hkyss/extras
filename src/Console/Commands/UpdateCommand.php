@@ -1,43 +1,44 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
-use EvolutionCMS\Extras\Services\ExtrasService;
+use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasUpdateCommand extends Command
+class UpdateCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:update';
     protected static $defaultDescription = 'Update EvolutionCMS extra';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
-
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::OPTIONAL, 'Package name to update (if not specified, updates all)')
-            ->addOption('update-version', null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
-            ->addOption('update-force', null, InputOption::VALUE_NONE, 'Force update even if already at latest version')
-            ->addOption('check-only', null, InputOption::VALUE_NONE, 'Only check for updates without installing');
+            ->addOption(CommandOptions::VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
+            ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force update even if already at latest version')
+            ->addOption(CommandOptions::CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for updates without installing');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
-        $version = $input->getOption('update-version');
-        $force = $input->getOption('update-force');
-        $checkOnly = $input->getOption('check-only');
+        
+        $version = $input->getOption(CommandOptions::VERSION->value) ?: 'latest';
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $checkOnly = $input->getOption(CommandOptions::CHECK_ONLY->value);
 
         try {
             if ($packageName) {
@@ -46,8 +47,7 @@ class ExtrasUpdateCommand extends Command
                 return $this->updateAllPackages($output, $version, $force, $checkOnly);
             }
         } catch (\Exception $e) {
-            $output->writeln("<error>Error: " . $e->getMessage() . "</error>");
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'update');
         }
     }
 
@@ -81,24 +81,24 @@ class ExtrasUpdateCommand extends Command
             return Command::SUCCESS;
         }
 
-        $output->writeln("\n<info>Updating package...</info>");
+        $output->writeln("\n<info>Updating package</info>");
 
         $progressBar = new ProgressBar($output, 3);
         $progressBar->start();
 
         $progressBar->advance();
-        $progressBar->setMessage('Updating composer.json...');
+        $progressBar->setMessage('Updating composer.json');
 
         $success = $this->extrasService->updateExtra($packageName, $version);
 
         if ($success) {
             $progressBar->advance();
-            $progressBar->setMessage('Running composer update...');
+            $progressBar->setMessage('Running composer update');
             $progressBar->advance();
-            $progressBar->setMessage('Update completed!');
+            $progressBar->setMessage('Update completed');
             $progressBar->finish();
 
-            $output->writeln("\n<info>Package '{$packageName}' updated successfully!</info>");
+            $output->writeln("\n<info>Package '{$packageName}' updated successfully</info>");
             return Command::SUCCESS;
         } else {
             $progressBar->finish();
@@ -165,7 +165,7 @@ class ExtrasUpdateCommand extends Command
             }
         }
 
-        $output->writeln("\n<info>Update summary:</info>");
+        $output->writeln("\n<info>Update summary</info>");
         $output->writeln("Updated: <info>{$updatedCount}</info>");
         $output->writeln("Failed: <error>{$failedCount}</error>");
 

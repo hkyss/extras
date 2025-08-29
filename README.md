@@ -64,10 +64,10 @@ php artisan vendor:publish --tag=extras-config
 php artisan extras:list
 ```
 
-Опции:
-- `--installed` - показать только установленные дополнения
+**Опции:**
+- `--installed, -i` - показать только установленные дополнения
 - `--search="поиск"` - поиск по названию или описанию
-- `--format=json` - вывод в формате JSON
+- `--format=table|json` - формат вывода (по умолчанию: table)
 - `--interactive` - интерактивный режим установки
 
 ### Установка дополнения
@@ -76,9 +76,22 @@ php artisan extras:list
 php artisan extras:install vendor/package-name
 ```
 
-Опции:
-- `--version=1.0.0` - указать версию для установки
+**Опции:**
+- `--version=1.0.0` - указать версию для установки (по умолчанию: latest)
 - `--force` - принудительная установка (даже если уже установлено)
+- `--no-deps` - пропустить установку зависимостей
+
+**Примеры:**
+```bash
+# Установка последней версии
+php artisan extras:install evolution-cms/tinymce5
+
+# Установка конкретной версии
+php artisan extras:install evolution-cms/tinymce5 --version=5.7.1
+
+# Принудительная переустановка
+php artisan extras:install evolution-cms/tinymce5 --force
+```
 
 ### Удаление дополнения
 
@@ -86,8 +99,9 @@ php artisan extras:install vendor/package-name
 php artisan extras:remove vendor/package-name
 ```
 
-Опции:
+**Опции:**
 - `--force` - удалить без подтверждения
+- `--keep-deps` - сохранить зависимости, если они не используются другими пакетами
 
 ### Обновление дополнений
 
@@ -99,118 +113,210 @@ php artisan extras:update vendor/package-name
 php artisan extras:update
 ```
 
-Опции:
-- `--version=1.0.0` - указать версию для обновления
+**Опции:**
+- `--version=1.0.0` - указать версию для обновления (по умолчанию: latest)
 - `--force` - принудительное обновление
-- `--check-only` - только проверить доступные обновления
+- `--check-only` - только проверить доступные обновления без установки
 
-### Массовые операции
+### Batch операции
 
-#### Массовая установка
+#### Установка нескольких дополнений
+
 ```bash
-# Установить несколько дополнений
+# Установка из списка
 php artisan extras:batch:install package1 package2 package3
 
-# Установить из файла (по одному на строку)
+# Установка из файла
 php artisan extras:batch:install --file=packages.txt
 
-# Предварительный просмотр без установки
+# Принудительная установка без подтверждения
+php artisan extras:batch:install package1 package2 --force
+
+# Продолжить при ошибках
+php artisan extras:batch:install package1 package2 --continue-on-error
+
+# Тестовый запуск (dry run)
 php artisan extras:batch:install package1 package2 --dry-run
+
+# Параллельная установка
+php artisan extras:batch:install package1 package2 --parallel=4
 ```
 
-Опции:
-- `--file=filename` - файл со списком пакетов
-- `--force` - пропустить подтверждения
-- `--continue-on-error` - продолжить при ошибках
-- `--dry-run` - предварительный просмотр
-- `--parallel=N` - количество параллельных установок
+#### Обновление нескольких дополнений
 
-#### Массовое обновление
 ```bash
-# Обновить конкретные дополнения
+# Обновить конкретные пакеты
 php artisan extras:batch:update package1 package2
 
-# Обновить все установленные дополнения
+# Обновить все установленные пакеты
 php artisan extras:batch:update
 
-# Проверить доступные обновления
+# Только проверить обновления
 php artisan extras:batch:update --check-only
+
+# Принудительное обновление
+php artisan extras:batch:update --force
 ```
 
-Опции:
-- `--file=filename` - файл со списком пакетов
-- `--force` - пропустить подтверждения
-- `--continue-on-error` - продолжить при ошибках
-- `--dry-run` - предварительный просмотр
-- `--check-only` - только проверить обновления
-- `--parallel=N` - количество параллельных обновлений
+#### Удаление нескольких дополнений
 
-#### Массовое удаление
 ```bash
-# Удалить несколько дополнений
+# Удалить конкретные пакеты
 php artisan extras:batch:remove package1 package2
 
 # Удалить все установленные дополнения
 php artisan extras:batch:remove --all
 
-# Удалить из файла
-php artisan extras:batch:remove --file=packages.txt
+# Сохранить зависимости
+php artisan extras:batch:remove package1 package2 --keep-deps
 ```
 
-Опции:
-- `--file=filename` - файл со списком пакетов
-- `--force` - пропустить подтверждения
-- `--continue-on-error` - продолжить при ошибках
-- `--dry-run` - предварительный просмотр
-- `--all` - удалить все установленные дополнения
-- `--keep-deps` - сохранить зависимости
+### Управление кешем
+
+```bash
+# Очистить кеш
+php artisan extras:cache --clear
+
+# Показать статус кеша
+php artisan extras:cache --status
+
+# Обновить кеш
+php artisan extras:cache --refresh
+
+# Показать статистику кеша
+php artisan extras:cache --stats
+```
 
 ### Информация о дополнении
 
 ```bash
-# Основная информация
-php artisan extras:info package-name
-
 # Подробная информация
-php artisan extras:info package-name --verbose
-
-# С зависимостями
-php artisan extras:info package-name --dependencies
-
-# История релизов
-php artisan extras:info package-name --releases
+php artisan extras:info vendor/package-name
 
 # В формате JSON
-php artisan extras:info package-name --format=json
+php artisan extras:info vendor/package-name --format=json
 
-# В формате YAML
-php artisan extras:info package-name --format=yaml
+# С зависимостями
+php artisan extras:info vendor/package-name --dependencies
+
+# С историей релизов
+php artisan extras:info vendor/package-name --releases
+
+# Подробный вывод
+php artisan extras:info vendor/package-name --verbose
 ```
 
-Опции:
-- `--verbose, -v` - показать подробную информацию
-- `--dependencies, -d` - показать зависимости
-- `--releases, -r` - показать историю релизов
-- `--format, -f` - формат вывода (table, json, yaml)
+## Унифицированные опции
 
-### Управление кэшем
+Все команды поддерживают следующие унифицированные опции:
+
+### Общие опции
+- `--version=VERSION` - указать версию
+- `--force` - принудительное выполнение
+- `--dry-run` - тестовый запуск без изменений
+- `--verbose, -v` - подробный вывод
+- `--quiet` - тихий режим
+
+### Batch опции
+- `--file=FILE` - файл со списком пакетов
+- `--continue-on-error` - продолжить при ошибках
+- `--parallel=N` - количество параллельных операций
+
+### Специфичные опции
+- `--search=QUERY` - поиск
+- `--format=FORMAT` - формат вывода
+- `--interactive` - интерактивный режим
+- `--installed` - только установленные
+- `--dependencies` - показать зависимости
+- `--releases` - показать релизы
+- `--check-only` - только проверка
+- `--keep-deps` - сохранить зависимости
+- `--no-deps` - пропустить зависимости
+
+## Backward Compatibility
+
+Для обеспечения совместимости со старыми версиями, все legacy опции продолжают работать:
+
+### Legacy опции (устарели, но работают)
+- `--install-version` → `--version`
+- `--update-version` → `--version`
+- `--install-force` → `--force`
+- `--update-force` → `--force`
+- `--remove-force` → `--force`
+- `--batch-install-force` → `--force`
+- `--batch-update-force` → `--force`
+- `--batch-remove-force` → `--force`
+- `--batch-install-dry-run` → `--dry-run`
+- `--batch-update-dry-run` → `--dry-run`
+- `--batch-remove-dry-run` → `--dry-run`
+- `--install-file` → `--file`
+- `--update-file` → `--file`
+- `--remove-file` → `--file`
+- `--list-format` → `--format`
+- `--info-format` → `--format`
+
+**Примечание:** Использование legacy опций вызовет предупреждение в логах. Рекомендуется перейти на новые унифицированные опции.
+
+## Логирование
+
+Все операции логируются с structured logging:
+
+```php
+// Примеры логов
+extras.install_started: {"package": "vendor/package", "version": "1.0.0", "force": false}
+extras.install_completed: {"package": "vendor/package", "version": "1.0.0"}
+extras.legacy_option_used: {"legacy_option": "install-version", "modern_option": "version"}
+```
+
+## Валидация
+
+Команды автоматически валидируют:
+- Формат имени пакета (vendor/package)
+- Формат версии (x.y.z или latest)
+- Конфликтующие опции
+- Наличие пакета в репозитории
+
+## Обработка ошибок
+
+Все команды используют единообразную обработку ошибок:
+- Структурированное логирование
+- Подробные сообщения об ошибках
+- Stack trace в verbose режиме
+- Graceful degradation при ошибках
+
+## Примеры использования
+
+### Типичный workflow
 
 ```bash
-# Очистить кэш
+# Посмотреть доступные дополнения
+php artisan extras:list
+
+# Установить редактор
+php artisan extras:install evolution-cms/tinymce5 --version=5.7.1
+
+# Проверить установленные
+php artisan extras:list --installed
+
+# Обновить все дополнения
+php artisan extras:batch:update --check-only
+
+# Обновить с принудительным режимом
+php artisan extras:batch:update --force
+
+# Очистить кеш
 php artisan extras:cache --clear
-
-# Показать статус кэша
-php artisan extras:cache --status
-
-# Обновить кэш
-php artisan extras:cache --refresh
-
-# Статистика кэша
-php artisan extras:cache --stats
 ```
 
-Опции:
-- `--clear, -c` - очистить весь кэш
-- `--status, -s` - показать статус кэша
-- `--refresh, -r` - обновить кэш (очистить и перестроить)
-- `--stats` - показать статистику кэша
+### Автоматизация
+
+```bash
+# Установка из файла без подтверждения
+php artisan extras:batch:install --file=requirements.txt --force
+
+# Обновление всех пакетов с продолжением при ошибках
+php artisan extras:batch:update --continue-on-error
+
+# Удаление всех дополнений
+php artisan extras:batch:remove --all --force
+```

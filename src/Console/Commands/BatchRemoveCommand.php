@@ -1,48 +1,44 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use EvolutionCMS\Extras\Services\ExtrasService;
+use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasBatchRemoveCommand extends Command
+class BatchRemoveCommand extends AbstractBatchCommand
 {
     protected static $defaultName = 'extras:batch:remove';
     protected static $defaultDescription = 'Remove multiple extras in batch mode';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
-
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to remove')
-            ->addOption('remove-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('batch-remove-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('batch-remove-continue-on-error', null, InputOption::VALUE_NONE, 'Continue removal even if some packages fail')
-            ->addOption('batch-remove-dry-run', null, InputOption::VALUE_NONE, 'Show what would be removed without actually removing')
-            ->addOption('batch-keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies when removing packages')
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all installed extras');
+            ->configureBatchOptions()
+            ->addOption(CommandOptions::ALL->value, 'a', InputOption::VALUE_NONE, 'Remove all installed extras');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packages = $this->getPackagesList($input);
-        $dryRun = $input->getOption('batch-remove-dry-run');
+        $dryRun = $input->getOption(CommandOptions::DRY_RUN->value);
 
         if (empty($packages)) {
-            $output->writeln('<error>No packages specified for removal.</error>');
+            $output->writeln('<error>No packages specified for removal</error>');
             $output->writeln('Usage: php artisan extras:batch:remove package1 package2 package3');
             $output->writeln('   or: php artisan extras:batch:remove --file=packages.txt');
             $output->writeln('   or: php artisan extras:batch:remove --all');
@@ -53,13 +49,13 @@ class ExtrasBatchRemoveCommand extends Command
             return $this->performDryRun($output, $packages);
         }
 
-        $force = $input->getOption('batch-remove-force');
-        $continueOnError = $input->getOption('batch-remove-continue-on-error');
-        $keepDeps = $input->getOption('batch-keep-deps');
+        $force = $input->getOption(CommandOptions::FORCE->value);
+        $continueOnError = $input->getOption(CommandOptions::CONTINUE_ON_ERROR->value);
+        $keepDeps = $input->getOption(CommandOptions::KEEP_DEPS->value);
 
         if (!$force) {
             if (!$this->confirmRemoval($input, $output, $packages)) {
-                $output->writeln('<comment>Removal cancelled.</comment>');
+                $output->writeln('<comment>Removal cancelled</comment>');
                 return Command::SUCCESS;
             }
         }
@@ -74,8 +70,8 @@ class ExtrasBatchRemoveCommand extends Command
     private function getPackagesList(InputInterface $input): array
     {
         $packages = $input->getArgument('packages');
-        $file = $input->getOption('remove-file');
-        $all = $input->getOption('all');
+        $file = $input->getOption(CommandOptions::FILE->value);
+        $all = $input->getOption(CommandOptions::ALL->value);
 
         if ($file && file_exists($file)) {
             $filePackages = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -136,9 +132,9 @@ class ExtrasBatchRemoveCommand extends Command
      */
     private function confirmRemoval(InputInterface $input, OutputInterface $output, array $packages): bool
     {
-        $output->writeln('<warning>WARNING: This action cannot be undone!</warning>');
+        $output->writeln('<warning>Warning: This action cannot be undone</warning>');
         $output->writeln('');
-        $output->writeln('<info>Packages to remove:</info>');
+        $output->writeln('<info>Packages to remove</info>');
         foreach ($packages as $package) {
             $output->writeln("  - {$package}");
         }
@@ -171,7 +167,7 @@ class ExtrasBatchRemoveCommand extends Command
      */
     private function performBatchRemoval(OutputInterface $output, array $packages, bool $continueOnError, bool $keepDeps): int
     {
-        $output->writeln('<info>Starting batch removal...</info>');
+        $output->writeln('<info>Starting batch removal</info>');
         $output->writeln('');
 
         $progressBar = new ProgressBar($output, count($packages));
@@ -222,13 +218,13 @@ class ExtrasBatchRemoveCommand extends Command
      */
     private function displayResults(OutputInterface $output, int $successCount, int $errorCount, array $errors): void
     {
-        $output->writeln('<info>Batch removal completed!</info>');
+                    $output->writeln('<info>Batch removal completed</info>');
         $output->writeln("Successfully removed: <info>{$successCount}</info> packages");
         
         if ($errorCount > 0) {
             $output->writeln("Failed to remove: <error>{$errorCount}</error> packages");
             $output->writeln('');
-            $output->writeln('<comment>Errors:</comment>');
+            $output->writeln('<comment>Errors</comment>');
             foreach ($errors as $error) {
                 $output->writeln("  - {$error}");
             }

@@ -1,45 +1,45 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Enums\CommandOptions;
 
-class ExtrasListCommand extends Command
+class ListCommand extends AbstractExtrasCommand
 {
     protected static $defaultName = 'extras:list';
     protected static $defaultDescription = 'List available EvolutionCMS extras';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
-
+    /**
+     * @param void
+     * @return void
+     */
     protected function configure(): void
     {
         $this
-            ->addOption('installed', 'i', InputOption::VALUE_NONE, 'Show only installed extras')
-            ->addOption('search', null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
-            ->addOption('list-format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
-            ->addOption('interactive', null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
+            ->addOption(CommandOptions::INSTALLED->value, 'i', InputOption::VALUE_NONE, 'Show only installed extras')
+            ->addOption(CommandOptions::SEARCH->value, null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
+            ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
+            ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $installedOnly = $input->getOption('installed');
-        $search = $input->getOption('search');
-        $format = $input->getOption('list-format');
-        $interactive = $input->getOption('interactive');
+        $installedOnly = $input->getOption(CommandOptions::INSTALLED->value);
+        $search = $input->getOption(CommandOptions::SEARCH->value);
+        $format = $input->getOption(CommandOptions::FORMAT->value) ?: 'table';
+        $interactive = $input->getOption(CommandOptions::INTERACTIVE->value);
 
         try {
             if ($installedOnly) {
@@ -64,8 +64,7 @@ class ExtrasListCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'list');
         }
     }
 
@@ -149,7 +148,7 @@ class ExtrasListCommand extends Command
     private function handleInteractiveMode(InputInterface $input, OutputInterface $output, array $extras): void
     {
         if (empty($extras)) {
-            $output->writeln('<comment>No extras available for installation.</comment>');
+            $output->writeln('<comment>No extras available for installation</comment>');
             return;
         }
 
@@ -162,7 +161,7 @@ class ExtrasListCommand extends Command
         $availableExtras = array_filter($extras, fn($extra) => !$extra->isInstalled());
         
         if (empty($availableExtras)) {
-            $output->writeln('<comment>All available extras are already installed.</comment>');
+            $output->writeln('<comment>All available extras are already installed</comment>');
             return;
         }
 
@@ -182,7 +181,7 @@ class ExtrasListCommand extends Command
         $selectedIndex = $helper->ask($input, $output, $question);
         
         if ($selectedIndex === 0) {
-            $output->writeln('<comment>Installation cancelled.</comment>');
+            $output->writeln('<comment>Installation cancelled</comment>');
             return;
         }
 
@@ -201,16 +200,16 @@ class ExtrasListCommand extends Command
         );
 
         if (!$helper->ask($input, $output, $confirmQuestion)) {
-            $output->writeln('<comment>Installation cancelled.</comment>');
+            $output->writeln('<comment>Installation cancelled</comment>');
             return;
         }
 
         $output->writeln('');
-        $output->writeln('<info>Installing ' . $selectedExtra->getDisplayName() . '...</info>');
+        $output->writeln('<info>Installing ' . $selectedExtra->getDisplayName() . '</info>');
 
         try {
             $this->extrasService->installExtra($selectedExtra->name);
-            $output->writeln('<info>Successfully installed ' . $selectedExtra->getDisplayName() . '!</info>');
+            $output->writeln('<info>Successfully installed ' . $selectedExtra->getDisplayName() . '</info>');
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to install ' . $selectedExtra->getDisplayName() . ': ' . $e->getMessage() . '</error>');
         }

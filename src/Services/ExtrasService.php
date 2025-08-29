@@ -1,13 +1,13 @@
 <?php
 
-namespace EvolutionCMS\Extras\Services;
+namespace hkyss\Extras\Services;
 
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
 
-use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
-use EvolutionCMS\Extras\Managers\RepositoryManager;
-use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
-use EvolutionCMS\Extras\Exceptions\InstallationException;
+use hkyss\Extras\Interfaces\PackageManagerInterface;
+use hkyss\Extras\Managers\RepositoryManager;
+use hkyss\Extras\Exceptions\PackageNotFoundException;
+use hkyss\Extras\Exceptions\InstallationException;
 
 class ExtrasService
 {
@@ -18,7 +18,7 @@ class ExtrasService
     public function __construct(RepositoryManager $repositoryManager, PackageManagerInterface $packageManager = null)
     {
         $this->repositoryManager = $repositoryManager;
-        $this->packageManager = $packageManager ?? new \EvolutionCMS\Extras\Managers\ComposerPackageManager();
+        $this->packageManager = $packageManager ?? new \hkyss\Extras\Managers\ComposerPackageManager();
         $this->cachePath = config('extras.cache.path', defined('EVO_CORE_PATH') ? EVO_CORE_PATH . 'cache/extras/' : 'cache/extras/');
         $this->ensureCacheDirectory();
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace EvolutionCMS\Extras\Factories;
+namespace hkyss\Extras\Factories;
 
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Console\Commands\ExtrasListCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
+use hkyss\Extras\Services\ExtrasService;
+use hkyss\Extras\Console\Commands\ListCommand;
+use hkyss\Extras\Console\Commands\InstallCommand;
+use hkyss\Extras\Console\Commands\RemoveCommand;
+use hkyss\Extras\Console\Commands\UpdateCommand;
 
 class CommandFactory
 {
@@ -18,35 +18,35 @@ class CommandFactory
     }
 
     /**
-     * @return ExtrasListCommand
+     * @return ListCommand
      */
-    public function createListCommand(): ExtrasListCommand
+    public function createListCommand(): ListCommand
     {
-        return new ExtrasListCommand($this->extrasService);
+        return new ListCommand($this->extrasService);
     }
 
     /**
-     * @return ExtrasInstallCommand
+     * @return InstallCommand
      */
-    public function createInstallCommand(): ExtrasInstallCommand
+    public function createInstallCommand(): InstallCommand
     {
-        return new ExtrasInstallCommand($this->extrasService);
+        return new InstallCommand($this->extrasService);
     }
 
     /**
-     * @return ExtrasRemoveCommand
+     * @return RemoveCommand
      */
-    public function createRemoveCommand(): ExtrasRemoveCommand
+    public function createRemoveCommand(): RemoveCommand
     {
-        return new ExtrasRemoveCommand($this->extrasService);
+        return new RemoveCommand($this->extrasService);
     }
 
     /**
-     * @return ExtrasUpdateCommand
+     * @return UpdateCommand
      */
-    public function createUpdateCommand(): ExtrasUpdateCommand
+    public function createUpdateCommand(): UpdateCommand
     {
-        return new ExtrasUpdateCommand($this->extrasService);
+        return new UpdateCommand($this->extrasService);
     }
 
     /**

@@ -1,12 +1,12 @@
 <?php
 
-namespace EvolutionCMS\Extras\Repositories;
+namespace hkyss\Extras\Repositories;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
-use EvolutionCMS\Extras\Models\Extras;
-use EvolutionCMS\Extras\Services\CacheService;
+use hkyss\Extras\Interfaces\RepositoryInterface;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Services\CacheService;
 
 class ApiRepository implements RepositoryInterface
 {
@@ -63,13 +63,11 @@ class ApiRepository implements RepositoryInterface
             return $this->cache->get($cacheKey);
         }
 
-        // Попробуем найти в кэше getAll() сначала
         $allCacheKey = "api_extras_all";
         if ($this->cache->has($allCacheKey)) {
             $allExtras = $this->cache->get($allCacheKey);
             foreach ($allExtras as $extra) {
                 if ($extra->name === $packageName) {
-                    // Кэшируем найденный пакет отдельно
                     $this->cache->set($cacheKey, $extra, 3600);
                     return $extra;
                 }
