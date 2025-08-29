@@ -13,25 +13,27 @@
         "php": "^8.0",
         "guzzlehttp/guzzle": "^7.0",
         "symfony/console": "^5.1|^6.0",
-        "symfony/process": "^5.1|^6.0"
+        "symfony/process": "^5.1|^6.0",
+        "psr/log": "^1.1|^2.0|^3.0",
+        "symfony/yaml": "^5.1|^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
-            "EvolutionCMS\\Extras\\": "src/"
+            "hkyss\\Extras\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "EvolutionCMS\\Extras\\Tests\\": "tests/"
+            "hkyss\\Extras\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "EvolutionCMS\\Extras\\ExtrasServiceProvider"
+                "hkyss\\Extras\\ExtrasServiceProvider"
             ]
         }
     },

@@ -1,6 +1,6 @@
 <?php
 
-namespace EvolutionCMS\Extras\Exceptions;
+namespace hkyss\Extras\Exceptions;
 
 class PackageNotFoundException extends ExtrasException
 {

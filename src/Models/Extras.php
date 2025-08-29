@@ -1,6 +1,6 @@
 <?php
 
-namespace EvolutionCMS\Extras\Models;
+namespace hkyss\Extras\Models;
 
 class Extras
 {

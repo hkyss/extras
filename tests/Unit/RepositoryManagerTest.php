@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit;
+namespace hkyss\Extras\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use EvolutionCMS\Extras\Managers\RepositoryManager;
-use EvolutionCMS\Extras\Models\Extras;
-use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
+use hkyss\Extras\Managers\RepositoryManager;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Interfaces\RepositoryInterface;
 
 class RepositoryManagerTest extends TestCase
 {

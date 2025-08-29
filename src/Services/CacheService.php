@@ -1,6 +1,6 @@
 <?php
 
-namespace EvolutionCMS\Extras\Services;
+namespace hkyss\Extras\Services;
 
 use Illuminate\Cache\CacheManager;
 

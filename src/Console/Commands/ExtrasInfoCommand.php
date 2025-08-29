@@ -1,52 +1,58 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
 
-class ExtrasInfoCommand extends Command
+class ExtrasInfoCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:info';
     protected static $defaultDescription = 'Show detailed information about an extra';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
+    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to get info for')
-            ->addOption('info-format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
-            ->addOption('verbose', 'v', InputOption::VALUE_NONE, 'Show verbose information')
-            ->addOption('dependencies', null, InputOption::VALUE_NONE, 'Show dependency information')
-            ->addOption('releases', null, InputOption::VALUE_NONE, 'Show release history');
+            ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml)', 'table')
+            ->addOption(CommandOptions::VERBOSE->value, 'v', InputOption::VALUE_NONE, 'Show verbose information')
+            ->addOption(CommandOptions::DEPENDENCIES->value, null, InputOption::VALUE_NONE, 'Show dependency information')
+            ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history')
+            // Legacy options for backward compatibility
+            ->addOption(CommandOptions::INFO_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml) (legacy)', 'table');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $package = $input->getArgument('package');
-        $format = $input->getOption('info-format');
-        $verbose = $input->getOption('verbose');
-        $showDependencies = $input->getOption('dependencies');
-        $showReleases = $input->getOption('releases');
+        
+        $this->showLegacyOptionWarnings($input);
+        
+        if (!$this->validateNoConflictingOptions($input)) {
+            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
+            return Command::FAILURE;
+        }
+        
+        $format = $this->getOptionWithLegacySupport($input, CommandOptions::FORMAT, 'table');
+        $verbose = $this->hasOptionWithLegacySupport($input, CommandOptions::VERBOSE);
+        $showDependencies = $this->hasOptionWithLegacySupport($input, CommandOptions::DEPENDENCIES);
+        $showReleases = $this->hasOptionWithLegacySupport($input, CommandOptions::RELEASES);
 
         try {
-            $extra = $this->extrasService->getExtra($package);
-            
+            if (!$this->validatePackageName($package)) {
+                $output->writeln("<error>Invalid package name format: {$package}</error>");
+                $output->writeln("<comment>Package name should be in format: vendor/package</comment>");
+                return Command::FAILURE;
+            }
+
+            $extra = $this->getValidatedPackage($package, $output);
             if (!$extra) {
-                $output->writeln("<error>Package '{$package}' not found.</error>");
                 return Command::FAILURE;
             }
 
@@ -64,8 +70,7 @@ class ExtrasInfoCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $output->writeln("<error>Error getting info for '{$package}': {$e->getMessage()}</error>");
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'info');
         }
     }
 

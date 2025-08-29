@@ -1,45 +1,54 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
-use EvolutionCMS\Extras\Services\ExtrasService;
 
-class ExtrasRemoveCommand extends Command
+class ExtrasRemoveCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:remove';
     protected static $defaultDescription = 'Remove EvolutionCMS extra';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
+    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to remove')
-            ->addOption('remove-force', null, InputOption::VALUE_NONE, 'Force removal without confirmation')
-            ->addOption('remove-keep-deps', null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages');
+            ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation')
+            ->addOption(CommandOptions::KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages')
+            // Legacy options for backward compatibility
+            ->addOption(CommandOptions::REMOVE_FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation (legacy)')
+            ->addOption(CommandOptions::REMOVE_KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages (legacy)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
-        $force = $input->getOption('remove-force');
+        
+        $this->showLegacyOptionWarnings($input);
+        
+        if (!$this->validateNoConflictingOptions($input)) {
+            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
+            return Command::FAILURE;
+        }
+        
+        $force = $this->hasOptionWithLegacySupport($input, CommandOptions::FORCE);
+        $keepDeps = $this->hasOptionWithLegacySupport($input, CommandOptions::KEEP_DEPS);
 
         try {
-            $extra = $this->extrasService->getExtra($packageName);
+            if (!$this->validatePackageName($packageName)) {
+                $output->writeln("<error>Invalid package name format: {$packageName}</error>");
+                $output->writeln("<comment>Package name should be in format: vendor/package</comment>");
+                return Command::FAILURE;
+            }
+
+            $extra = $this->getValidatedPackage($packageName, $output);
             if (!$extra) {
-                $output->writeln("<error>Package '{$packageName}' not found in extras store</error>");
                 return Command::FAILURE;
             }
 
@@ -48,17 +57,10 @@ class ExtrasRemoveCommand extends Command
                 return Command::SUCCESS;
             }
 
-            $output->writeln("Package: <info>{$extra->name}</info>");
-            $output->writeln("Description: <info>{$extra->description}</info>");
-            $output->writeln("Author: <info>{$extra->author}</info>");
+            $this->displayPackageInfo($extra, $output);
 
             if (!$force) {
-                $output->writeln("\n<comment>Are you sure you want to remove this package? (y/N)</comment>");
-                $handle = fopen("php://stdin", "r");
-                $line = fgets($handle);
-                fclose($handle);
-                
-                if (trim(strtolower($line)) !== 'y' && trim(strtolower($line)) !== 'yes') {
+                if (!$this->confirmOperation($input, $output, 'Are you sure you want to remove this package?')) {
                     $output->writeln("<info>Operation cancelled</info>");
                     return Command::SUCCESS;
                 }
@@ -66,7 +68,13 @@ class ExtrasRemoveCommand extends Command
 
             $output->writeln("\n<info>Removing package...</info>");
 
-            $progressBar = new ProgressBar($output, 2);
+            $this->logOperation('remove_started', [
+                'package' => $packageName,
+                'force' => $force,
+                'keep_deps' => $keepDeps
+            ]);
+
+            $progressBar = $this->createProgressBar($output, 2);
             $progressBar->start();
 
             $progressBar->advance();
@@ -80,16 +88,25 @@ class ExtrasRemoveCommand extends Command
                 $progressBar->finish();
 
                 $output->writeln("\n<info>Package '{$packageName}' removed successfully!</info>");
+                
+                $this->logOperation('remove_completed', [
+                    'package' => $packageName
+                ]);
+                
                 return Command::SUCCESS;
             } else {
                 $progressBar->finish();
                 $output->writeln("\n<error>Failed to remove package '{$packageName}'</error>");
+                
+                $this->logOperation('remove_failed', [
+                    'package' => $packageName
+                ]);
+                
                 return Command::FAILURE;
             }
 
         } catch (\Exception $e) {
-            $output->writeln("<error>Error: " . $e->getMessage() . "</error>");
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'remove');
         }
     }
 }

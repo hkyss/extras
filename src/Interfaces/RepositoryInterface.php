@@ -1,8 +1,8 @@
 <?php
 
-namespace EvolutionCMS\Extras\Interfaces;
+namespace hkyss\Extras\Interfaces;
 
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
 
 interface RepositoryInterface
 {

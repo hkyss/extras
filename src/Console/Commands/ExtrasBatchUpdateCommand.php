@@ -1,39 +1,33 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use EvolutionCMS\Extras\Services\ExtrasService;
 
-class ExtrasBatchUpdateCommand extends Command
+class ExtrasBatchUpdateCommand extends BaseBatchCommand
 {
     protected static $defaultName = 'extras:batch:update';
     protected static $defaultDescription = 'Update multiple extras in batch mode';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
+    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to update (leave empty for all installed)')
-            ->addOption('update-file', null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line)')
-            ->addOption('batch-update-force', null, InputOption::VALUE_NONE, 'Skip confirmation prompts')
-            ->addOption('batch-update-continue-on-error', null, InputOption::VALUE_NONE, 'Continue update even if some packages fail')
-            ->addOption('batch-update-dry-run', null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating')
-            ->addOption('batch-check-only', null, InputOption::VALUE_NONE, 'Only check for available updates')
-            ->addOption('batch-update-parallel', null, InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1)', '1');
+            ->configureBatchOptions()
+            // Legacy options for backward compatibility
+            ->addOption(CommandOptions::UPDATE_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
+            ->addOption(CommandOptions::BATCH_UPDATE_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
+            ->addOption(CommandOptions::BATCH_UPDATE_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue update even if some packages fail (legacy)')
+            ->addOption(CommandOptions::BATCH_UPDATE_DRY_RUN->value, null, InputOption::VALUE_NONE, 'Show what would be updated without actually updating (legacy)')
+            ->addOption(CommandOptions::BATCH_CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for available updates (legacy)')
+            ->addOption(CommandOptions::BATCH_UPDATE_PARALLEL->value, null, InputOption::VALUE_OPTIONAL, 'Number of parallel updates (default: 1) (legacy)', '1');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

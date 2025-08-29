@@ -1,24 +1,24 @@
 <?php
 
-namespace EvolutionCMS\Extras;
+namespace hkyss\Extras;
 
 use Illuminate\Support\ServiceProvider;
-use EvolutionCMS\Extras\Console\Commands\ExtrasListCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasInstallCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasRemoveCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasUpdateCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchInstallCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchUpdateCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasBatchRemoveCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasInfoCommand;
-use EvolutionCMS\Extras\Console\Commands\ExtrasCacheCommand;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Services\CacheService;
-use EvolutionCMS\Extras\Managers\RepositoryManager;
-use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
-use EvolutionCMS\Extras\Repositories\ApiRepository;
-use EvolutionCMS\Extras\Repositories\GitHubRepository;
-use EvolutionCMS\Extras\Managers\ComposerPackageManager;
+use hkyss\Extras\Console\Commands\ExtrasListCommand;
+use hkyss\Extras\Console\Commands\ExtrasInstallCommand;
+use hkyss\Extras\Console\Commands\ExtrasRemoveCommand;
+use hkyss\Extras\Console\Commands\ExtrasUpdateCommand;
+use hkyss\Extras\Console\Commands\ExtrasBatchInstallCommand;
+use hkyss\Extras\Console\Commands\ExtrasBatchUpdateCommand;
+use hkyss\Extras\Console\Commands\ExtrasBatchRemoveCommand;
+use hkyss\Extras\Console\Commands\ExtrasInfoCommand;
+use hkyss\Extras\Console\Commands\ExtrasCacheCommand;
+use hkyss\Extras\Services\ExtrasService;
+use hkyss\Extras\Services\CacheService;
+use hkyss\Extras\Managers\RepositoryManager;
+use hkyss\Extras\Interfaces\PackageManagerInterface;
+use hkyss\Extras\Repositories\ApiRepository;
+use hkyss\Extras\Repositories\GitHubRepository;
+use hkyss\Extras\Managers\ComposerPackageManager;
 
 class ExtrasServiceProvider extends ServiceProvider
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace EvolutionCMS\Extras\Managers;
+namespace hkyss\Extras\Managers;
 
-use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Interfaces\RepositoryInterface;
+use hkyss\Extras\Models\Extras;
 
 class RepositoryManager
 {

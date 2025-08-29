@@ -1,9 +1,9 @@
 <?php
 
-namespace EvolutionCMS\Extras\Managers;
+namespace hkyss\Extras\Managers;
 
 use Symfony\Component\Process\Process;
-use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
+use hkyss\Extras\Interfaces\PackageManagerInterface;
 
 class ComposerPackageManager implements PackageManagerInterface
 {

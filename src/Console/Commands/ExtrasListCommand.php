@@ -1,45 +1,46 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Models\Extras;
+use hkyss\Extras\Models\Extras;
 
-class ExtrasListCommand extends Command
+class ExtrasListCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:list';
     protected static $defaultDescription = 'List available EvolutionCMS extras';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
+    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
         $this
-            ->addOption('installed', 'i', InputOption::VALUE_NONE, 'Show only installed extras')
-            ->addOption('search', null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
-            ->addOption('list-format', null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
-            ->addOption('interactive', null, InputOption::VALUE_NONE, 'Enable interactive installation mode');
+            ->addOption(CommandOptions::INSTALLED->value, 'i', InputOption::VALUE_NONE, 'Show only installed extras')
+            ->addOption(CommandOptions::SEARCH->value, null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
+            ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
+            ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode')
+            // Legacy options for backward compatibility
+            ->addOption(CommandOptions::LIST_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json) (legacy)', 'table');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $installedOnly = $input->getOption('installed');
-        $search = $input->getOption('search');
-        $format = $input->getOption('list-format');
-        $interactive = $input->getOption('interactive');
+        $this->showLegacyOptionWarnings($input);
+        
+        if (!$this->validateNoConflictingOptions($input)) {
+            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
+            return Command::FAILURE;
+        }
+        
+        $installedOnly = $this->hasOptionWithLegacySupport($input, CommandOptions::INSTALLED);
+        $search = $this->getOptionWithLegacySupport($input, CommandOptions::SEARCH);
+        $format = $this->getOptionWithLegacySupport($input, CommandOptions::FORMAT, 'table');
+        $interactive = $this->hasOptionWithLegacySupport($input, CommandOptions::INTERACTIVE);
 
         try {
             if ($installedOnly) {
@@ -64,8 +65,7 @@ class ExtrasListCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'list');
         }
     }
 

@@ -1,43 +1,46 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
-use EvolutionCMS\Extras\Services\ExtrasService;
 
-class ExtrasUpdateCommand extends Command
+class ExtrasUpdateCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:update';
     protected static $defaultDescription = 'Update EvolutionCMS extra';
 
-    private ExtrasService $extrasService;
-
-    public function __construct(ExtrasService $extrasService)
-    {
-        parent::__construct();
-        $this->extrasService = $extrasService;
-    }
+    use LegacyOptionsTrait;
 
     protected function configure(): void
     {
         $this
             ->addArgument('package', InputArgument::OPTIONAL, 'Package name to update (if not specified, updates all)')
-            ->addOption('update-version', null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
-            ->addOption('update-force', null, InputOption::VALUE_NONE, 'Force update even if already at latest version')
-            ->addOption('check-only', null, InputOption::VALUE_NONE, 'Only check for updates without installing');
+            ->addOption(CommandOptions::VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
+            ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force update even if already at latest version')
+            ->addOption(CommandOptions::CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for updates without installing')
+            // Legacy options for backward compatibility
+            ->addOption(CommandOptions::UPDATE_VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to update to (legacy)', 'latest')
+            ->addOption(CommandOptions::UPDATE_FORCE->value, null, InputOption::VALUE_NONE, 'Force update even if already at latest version (legacy)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $packageName = $input->getArgument('package');
-        $version = $input->getOption('update-version');
-        $force = $input->getOption('update-force');
-        $checkOnly = $input->getOption('check-only');
+        
+        $this->showLegacyOptionWarnings($input);
+        
+        if (!$this->validateNoConflictingOptions($input)) {
+            $output->writeln("<error>Conflicting options detected. Please use either modern or legacy options, not both.</error>");
+            return Command::FAILURE;
+        }
+        
+        $version = $this->getOptionWithLegacySupport($input, CommandOptions::VERSION, 'latest');
+        $force = $this->hasOptionWithLegacySupport($input, CommandOptions::FORCE);
+        $checkOnly = $this->hasOptionWithLegacySupport($input, CommandOptions::CHECK_ONLY);
 
         try {
             if ($packageName) {
@@ -46,8 +49,7 @@ class ExtrasUpdateCommand extends Command
                 return $this->updateAllPackages($output, $version, $force, $checkOnly);
             }
         } catch (\Exception $e) {
-            $output->writeln("<error>Error: " . $e->getMessage() . "</error>");
-            return Command::FAILURE;
+            return $this->handleException($e, $output, 'update');
         }
     }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace EvolutionCMS\Extras\Tests\Unit;
+namespace hkyss\Extras\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use EvolutionCMS\Extras\Services\ExtrasService;
-use EvolutionCMS\Extras\Managers\RepositoryManager;
-use EvolutionCMS\Extras\Interfaces\PackageManagerInterface;
-use EvolutionCMS\Extras\Models\Extras;
-use EvolutionCMS\Extras\Exceptions\PackageNotFoundException;
+use hkyss\Extras\Services\ExtrasService;
+use hkyss\Extras\Managers\RepositoryManager;
+use hkyss\Extras\Interfaces\PackageManagerInterface;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Exceptions\PackageNotFoundException;
 
 class ExtrasServiceTest extends TestCase
 {

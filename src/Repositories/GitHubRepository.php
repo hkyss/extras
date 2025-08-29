@@ -1,12 +1,12 @@
 <?php
 
-namespace EvolutionCMS\Extras\Repositories;
+namespace hkyss\Extras\Repositories;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use EvolutionCMS\Extras\Interfaces\RepositoryInterface;
-use EvolutionCMS\Extras\Models\Extras;
-use EvolutionCMS\Extras\Services\CacheService;
+use hkyss\Extras\Interfaces\RepositoryInterface;
+use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Services\CacheService;
 
 class GitHubRepository implements RepositoryInterface
 {

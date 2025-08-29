@@ -1,69 +1,71 @@
 <?php
 
-namespace EvolutionCMS\Extras\Console\Commands;
+namespace hkyss\Extras\Console\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use EvolutionCMS\Extras\Services\CacheService;
+use hkyss\Extras\Services\CacheService;
 
-class ExtrasCacheCommand extends Command
+class ExtrasCacheCommand extends BaseExtrasCommand
 {
     protected static $defaultName = 'extras:cache';
     protected static $defaultDescription = 'Manage extras cache';
 
     private CacheService $cacheService;
 
-    public function __construct(CacheService $cacheService)
+    public function __construct(ExtrasService $extrasService, CacheService $cacheService, ?LoggerInterface $logger = null)
     {
-        parent::__construct();
+        parent::__construct($extrasService, $logger);
         $this->cacheService = $cacheService;
     }
 
     protected function configure(): void
     {
         $this
-            ->addOption('clear', 'c', InputOption::VALUE_NONE, 'Clear all cache')
-            ->addOption('status', 's', InputOption::VALUE_NONE, 'Show cache status')
-            ->addOption('refresh', 'r', InputOption::VALUE_NONE, 'Refresh cache (clear and rebuild)')
-            ->addOption('stats', null, InputOption::VALUE_NONE, 'Show cache statistics');
+            ->addOption(CommandOptions::CLEAR->value, 'c', InputOption::VALUE_NONE, 'Clear all cache')
+            ->addOption(CommandOptions::STATUS->value, 's', InputOption::VALUE_NONE, 'Show cache status')
+            ->addOption(CommandOptions::REFRESH->value, 'r', InputOption::VALUE_NONE, 'Refresh cache (clear and rebuild)')
+            ->addOption(CommandOptions::STATS->value, null, InputOption::VALUE_NONE, 'Show cache statistics');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $clear = $input->getOption('clear');
-        $status = $input->getOption('status');
-        $refresh = $input->getOption('refresh');
-        $stats = $input->getOption('stats');
+        $clear = $input->getOption(CommandOptions::CLEAR->value);
+        $status = $input->getOption(CommandOptions::STATUS->value);
+        $refresh = $input->getOption(CommandOptions::REFRESH->value);
+        $stats = $input->getOption(CommandOptions::STATS->value);
 
-        if ($clear) {
-            $this->clearCache($output);
+        try {
+            if ($clear) {
+                $this->clearCache($output);
+                return Command::SUCCESS;
+            }
+
+            if ($refresh) {
+                $this->refreshCache($output);
+                return Command::SUCCESS;
+            }
+
+            if ($status) {
+                $this->showStatus($output);
+                return Command::SUCCESS;
+            }
+
+            if ($stats) {
+                $this->showStats($output);
+                return Command::SUCCESS;
+            }
+
+            $this->showHelp($output);
             return Command::SUCCESS;
+        } catch (\Exception $e) {
+            return $this->handleException($e, $output, 'cache');
         }
-
-        if ($refresh) {
-            $this->refreshCache($output);
-            return Command::SUCCESS;
-        }
-
-        if ($status) {
-            $this->showStatus($output);
-            return Command::SUCCESS;
-        }
-
-        if ($stats) {
-            $this->showStats($output);
-            return Command::SUCCESS;
-        }
-
-        $this->showHelp($output);
-        return Command::SUCCESS;
     }
 
     /**
      * @param OutputInterface $output
-     * @return void
      */
     private function clearCache(OutputInterface $output): void
     {
@@ -74,7 +76,6 @@ class ExtrasCacheCommand extends Command
 
     /**
      * @param OutputInterface $output
-     * @return void
      */
     private function refreshCache(OutputInterface $output): void
     {
@@ -86,7 +87,6 @@ class ExtrasCacheCommand extends Command
 
     /**
      * @param OutputInterface $output
-     * @return void
      */
     private function showStatus(OutputInterface $output): void
     {
@@ -103,7 +103,6 @@ class ExtrasCacheCommand extends Command
 
     /**
      * @param OutputInterface $output
-     * @return void
      */
     private function showStats(OutputInterface $output): void
     {
@@ -117,7 +116,6 @@ class ExtrasCacheCommand extends Command
 
     /**
      * @param OutputInterface $output
-     * @return void
      */
     private function showHelp(OutputInterface $output): void
     {
