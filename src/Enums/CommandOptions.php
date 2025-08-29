@@ -1,22 +1,22 @@
 <?php
 
-namespace hkyss\Extras\Console\Commands;
+namespace hkyss\Extras\Enums;
 
 enum CommandOptions: string
 {
-    // Common options
+
     case VERSION = 'version';
     case FORCE = 'force';
     case DRY_RUN = 'dry-run';
     case VERBOSE = 'verbose';
     case QUIET = 'quiet';
     
-    // Batch options
+
     case FILE = 'file';
     case CONTINUE_ON_ERROR = 'continue-on-error';
     case PARALLEL = 'parallel';
     
-    // Specific options
+
     case SEARCH = 'search';
     case FORMAT = 'format';
     case INTERACTIVE = 'interactive';
@@ -27,13 +27,13 @@ enum CommandOptions: string
     case KEEP_DEPS = 'keep-deps';
     case NO_DEPS = 'no-deps';
     
-    // Cache options
+
     case CLEAR = 'clear';
     case STATUS = 'status';
     case REFRESH = 'refresh';
     case STATS = 'stats';
     
-    // Legacy options (for backward compatibility)
+
     case INSTALL_VERSION = 'install-version';
     case UPDATE_VERSION = 'update-version';
     case INSTALL_FORCE = 'install-force';
@@ -62,7 +62,8 @@ enum CommandOptions: string
     case ALL = 'all';
 
     /**
-     * Get option name with prefix
+     * @param string $prefix
+     * @return string
      */
     public function withPrefix(string $prefix): string
     {
@@ -70,7 +71,7 @@ enum CommandOptions: string
     }
 
     /**
-     * Get legacy option name
+     * @return string
      */
     public function getLegacyName(): string
     {
@@ -88,7 +89,7 @@ enum CommandOptions: string
     }
 
     /**
-     * Get all legacy options
+     * @return array
      */
     public static function getLegacyOptions(): array
     {
@@ -123,7 +124,7 @@ enum CommandOptions: string
     }
 
     /**
-     * Check if option is legacy
+     * @return bool
      */
     public function isLegacy(): bool
     {
@@ -131,7 +132,7 @@ enum CommandOptions: string
     }
 
     /**
-     * Get modern equivalent for legacy option
+     * @return self|null
      */
     public function getModernEquivalent(): ?self
     {

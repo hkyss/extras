@@ -1,8 +1,9 @@
 <?php
 
-namespace hkyss\Extras\Console\Commands;
+namespace hkyss\Extras\Traits;
 
 use Symfony\Component\Console\Input\InputInterface;
+use hkyss\Extras\Enums\CommandOptions;
 
 trait LegacyOptionsTrait
 {
@@ -119,6 +120,7 @@ trait LegacyOptionsTrait
 
     /**
      * @param InputInterface $input
+     * @return void
      */
     protected function showLegacyOptionWarnings(InputInterface $input): void
     {

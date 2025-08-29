@@ -6,6 +6,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasInstallCommand extends BaseExtrasCommand
 {
@@ -21,7 +23,7 @@ class ExtrasInstallCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to install', 'latest')
             ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force installation even if already installed')
             ->addOption(CommandOptions::NO_DEPS->value, null, InputOption::VALUE_NONE, 'Skip dependency installation')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::INSTALL_VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to install (legacy)', 'latest')
             ->addOption(CommandOptions::INSTALL_FORCE->value, null, InputOption::VALUE_NONE, 'Force installation (legacy)');
     }

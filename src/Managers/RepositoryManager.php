@@ -109,7 +109,6 @@ class RepositoryManager
                 foreach ($extras as $extra) {
                     $extra->repository = $repository->getName();
                     
-                    // Проверяем, не видели ли мы уже этот пакет
                     $packageKey = $extra->name;
                     if (!isset($seenPackages[$packageKey])) {
                         $seenPackages[$packageKey] = true;

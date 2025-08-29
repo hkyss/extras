@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasUpdateCommand extends BaseExtrasCommand
 {
@@ -22,7 +24,7 @@ class ExtrasUpdateCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to update to', 'latest')
             ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force update even if already at latest version')
             ->addOption(CommandOptions::CHECK_ONLY->value, null, InputOption::VALUE_NONE, 'Only check for updates without installing')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::UPDATE_VERSION->value, null, InputOption::VALUE_REQUIRED, 'Version to update to (legacy)', 'latest')
             ->addOption(CommandOptions::UPDATE_FORCE->value, null, InputOption::VALUE_NONE, 'Force update even if already at latest version (legacy)');
     }

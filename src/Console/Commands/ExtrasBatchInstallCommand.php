@@ -6,6 +6,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasBatchInstallCommand extends BaseBatchCommand
 {
@@ -19,7 +21,7 @@ class ExtrasBatchInstallCommand extends BaseBatchCommand
         $this
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to install')
             ->configureBatchOptions()
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::INSTALL_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
             ->addOption(CommandOptions::BATCH_INSTALL_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
             ->addOption(CommandOptions::BATCH_INSTALL_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue installation even if some packages fail (legacy)')

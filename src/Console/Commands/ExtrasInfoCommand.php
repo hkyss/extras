@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasInfoCommand extends BaseExtrasCommand
 {
@@ -24,7 +26,7 @@ class ExtrasInfoCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::VERBOSE->value, 'v', InputOption::VALUE_NONE, 'Show verbose information')
             ->addOption(CommandOptions::DEPENDENCIES->value, null, InputOption::VALUE_NONE, 'Show dependency information')
             ->addOption(CommandOptions::RELEASES->value, null, InputOption::VALUE_NONE, 'Show release history')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::INFO_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json, yaml) (legacy)', 'table');
     }
 

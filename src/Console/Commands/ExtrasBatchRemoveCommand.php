@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasBatchRemoveCommand extends BaseBatchCommand
 {
@@ -22,7 +24,7 @@ class ExtrasBatchRemoveCommand extends BaseBatchCommand
             ->addArgument('packages', InputArgument::IS_ARRAY, 'List of packages to remove')
             ->configureBatchOptions()
             ->addOption(CommandOptions::ALL->value, 'a', InputOption::VALUE_NONE, 'Remove all installed extras')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::REMOVE_FILE->value, null, InputOption::VALUE_REQUIRED, 'File containing package list (one per line) (legacy)')
             ->addOption(CommandOptions::BATCH_REMOVE_FORCE->value, null, InputOption::VALUE_NONE, 'Skip confirmation prompts (legacy)')
             ->addOption(CommandOptions::BATCH_REMOVE_CONTINUE_ON_ERROR->value, null, InputOption::VALUE_NONE, 'Continue removal even if some packages fail (legacy)')

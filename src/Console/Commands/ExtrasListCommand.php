@@ -9,6 +9,8 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use hkyss\Extras\Models\Extras;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasListCommand extends BaseExtrasCommand
 {
@@ -24,7 +26,7 @@ class ExtrasListCommand extends BaseExtrasCommand
             ->addOption(CommandOptions::SEARCH->value, null, InputOption::VALUE_REQUIRED, 'Search extras by name or description')
             ->addOption(CommandOptions::FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json)', 'table')
             ->addOption(CommandOptions::INTERACTIVE->value, null, InputOption::VALUE_NONE, 'Enable interactive installation mode')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::LIST_FORMAT->value, null, InputOption::VALUE_REQUIRED, 'Output format (table, json) (legacy)', 'table');
     }
 

@@ -52,12 +52,7 @@ return [
             'organization' => 'evolution-cms-extras',
             'name' => 'EvolutionCMS Extras'
         ],
-        // Пример добавления дополнительных GitHub репозиториев
-        // [
-        //     'type' => 'github',
-        //     'organization' => 'your-org',
-        //     'name' => 'Your Repository'
-        // ],
+
     ],
 
     /*

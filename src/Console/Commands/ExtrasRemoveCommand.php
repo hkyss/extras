@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use hkyss\Extras\Enums\CommandOptions;
+use hkyss\Extras\Traits\LegacyOptionsTrait;
 
 class ExtrasRemoveCommand extends BaseExtrasCommand
 {
@@ -21,7 +23,7 @@ class ExtrasRemoveCommand extends BaseExtrasCommand
             ->addArgument('package', InputArgument::REQUIRED, 'Package name to remove')
             ->addOption(CommandOptions::FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation')
             ->addOption(CommandOptions::KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages')
-            // Legacy options for backward compatibility
+
             ->addOption(CommandOptions::REMOVE_FORCE->value, null, InputOption::VALUE_NONE, 'Force removal without confirmation (legacy)')
             ->addOption(CommandOptions::REMOVE_KEEP_DEPS->value, null, InputOption::VALUE_NONE, 'Keep dependencies if not used by other packages (legacy)');
     }
